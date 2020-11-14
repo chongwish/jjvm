@@ -1,0 +1,59 @@
+allprojects {
+    group = 'me.chongwish.jjvm'
+    version = '0.0.1'
+    description = """A JVM written Java"""
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'eclipse' // for emacs lsp
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    repositories {
+        maven { url "$mavenPublicRepo" }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes 'Main-Class': 'me.chongwish.jjvm.Starter'
+    }
+    archiveName 'jjvm.jar'
+}
+
+task start(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "me.chongwish.jjvm.Starter"
+}
+
+test {
+    useJUnit()
+    outputs.upToDateWhen { false }
+}
+
+dependencies {
+    // command line parser
+    compile 'info.picocli:picocli:4.5.1'
+    annotationProcessor 'info.picocli:picocli-codegen:4.5.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testImplementation 'junit:junit:4.13'
+
+    testCompile "org.mockito:mockito-core:2.+"
+
+    testImplementation project(':jjvm-demo')
+}

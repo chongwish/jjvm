@@ -1,0 +1,5 @@
+rootProject.name = 'jjvm'
+
+include 'demo'
+
+project(':demo').name = 'jjvm-demo'
