@@ -144,6 +144,30 @@ final class RuntimeDataArea {
             public boolean isInstanceOf(MethodArea.Clazz otherClazz) {
                 return clazz.lookLike(otherClazz);
             }
+
+            /**
+             * Convert java class `java/lang/String` to a string.
+             */
+            public String toString() {
+                if (clazz.className.equals("java/lang/String")) {
+                    Heap.ArrayInstance charsInstance = null;
+                    for (MethodArea.Field stringField : this.getFields()) {
+                        if (stringField.getName().equals("value")) {
+                            charsInstance = (Heap.ArrayInstance) stringField.getValue();
+                            break;
+                        }
+                    }
+
+                    int[] ints = (int[]) charsInstance.getFields();
+                    char[] chars = new char[ints.length];
+                    for (int i = 0; i < chars.length; ++i) {
+                        chars[i] = (char) ints[i];
+                    }
+
+                    return String.valueOf(chars);
+                }
+                return super.toString();
+            }
         }
 
         /**
@@ -553,7 +577,6 @@ final class RuntimeDataArea {
                 return stringInstance;
             }
 
-
             /**
              * Get a instance of class `Method` by the given information. It will search all its inheritance tree.
              * @param name  method name
@@ -720,6 +743,12 @@ final class RuntimeDataArea {
                         }
                     }
                 }
+            }
+
+            /**
+             */
+            public Method findMethod(String name, String descriptor) {
+                return _clazzCache.get(CLASS_INFO_NAME).findMethod(name, descriptor);
             }
 
             /**

@@ -44,31 +44,26 @@ final class NativeMethod {
                 operandStack.pop();
             });
 
-        // @todo
         fill("java/lang/Class", "getPrimitiveClass", operandStack -> {
-                try {
-                    java.lang.reflect.Method method = Class.class.getDeclaredMethod("getPrimitiveClass", Class.forName("java.lang.String"));
-                    method.setAccessible(true);
-                    Heap.Instance stringInstance = (Heap.Instance) operandStack.pop();
-                    // Heap.ArrayInstance charsInstance = (Heap.ArrayInstance) stringInstance.findField("value", "[B").getValue();
-                    Heap.ArrayInstance charsInstance = null;
-                    for (MethodArea.Field stringField : stringInstance.getFields()) {
-                        if (stringField.getName().equals("value")) {
-                            charsInstance = (Heap.ArrayInstance) stringField.getValue();
-                            break;
-                        }
-                    }
+                Heap.Instance stringInstance = (Heap.Instance) operandStack.pop();
+                operandStack.push(MethodArea.findClazz(stringInstance.toString()).getClazzInstance());
+            });
 
-                    int[] ints = (int[]) charsInstance.getFields();
-                    char[] chars = new char[ints.length];
-                    for (int i = 0; i < chars.length; ++i) {
-                        chars[i] = (char) ints[i];
-                    }
+        fill("java/lang/Class", "initClassName", operandStack -> {
+                String clazzName = ((Heap.Instance) operandStack.pop()).getTargetClazzName();
+                operandStack.push(MethodArea.Clazz.makeInstanceFrom(clazzName));
+            });
 
-                    Object result = method.invoke(null, String.valueOf(chars));
-                    operandStack.push(MethodArea.findClazz("java/lang/Class").makeInstance());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        fill("java/lang/Object", "getClass", operandStack -> {
+                Object object = operandStack.pop();
+                if (object instanceof Heap.Instance) {
+                    Heap.Instance instance = (Heap.Instance) object;
+                    operandStack.push(instance.getClazz().getClazzInstance());
+                } else if (object instanceof Heap.ArrayInstance) {
+                    Heap.ArrayInstance instance = (Heap.ArrayInstance) object;
+                    operandStack.push(instance.getArrayClazz().getClazzInstance());
+                } else {
+                    throw new RuntimeException("Can not get a class with a unknown instance.");
                 }
             });
 
@@ -83,22 +78,7 @@ final class NativeMethod {
                     Object argument1 = operandStack.pop();
 
                     Heap.Instance stringInstance = (Heap.Instance) argument1;
-                    // Heap.ArrayInstance charsInstance = (Heap.ArrayInstance) stringInstance.findField("value", "[B").getValue();
-                    Heap.ArrayInstance charsInstance = null;
-                    for (MethodArea.Field stringField : stringInstance.getFields()) {
-                        if (stringField.getName().equals("value")) {
-                            charsInstance = (Heap.ArrayInstance) stringField.getValue();
-                            break;
-                        }
-                    }
-
-                    int[] ints = (int[]) charsInstance.getFields();
-                    char[] chars = new char[ints.length];
-                    for (int i = 0; i < chars.length; ++i) {
-                        chars[i] = (char) ints[i];
-                    }
-
-                    Object result = method.invoke(null, String.valueOf(chars), argument2, argument3, argument4);
+                    Object result = method.invoke(null, stringInstance.toString(), argument2, argument3, argument4);
                     operandStack.push(MethodArea.findClazz("java/lang/Class").makeInstance());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -107,15 +87,7 @@ final class NativeMethod {
 
         // @todo
         fill("java/lang/Class", "desiredAssertionStatus0", operandStack -> {
-                try {
-                    java.lang.reflect.Method method = Class.class.getDeclaredMethod("desiredAssertionStatus0", java.lang.Class.class);
-                    method.setAccessible(true);
-                    operandStack.pop();
-                    Object result = method.invoke(null, java.lang.Class.class);
-                    operandStack.push((boolean) result ? 1 : 0);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                operandStack.push(0);
             });
 
         // @todo

@@ -852,16 +852,22 @@ final class Instruction {
                 String[] argumentTypes = method.getArgumentTypes();
                 int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes, method.getClassfileMethod().isStatic()) - 1;
 
-                Heap.Instance instance = (Heap.Instance) operandStack.bottom(localVariableIndex);
-                if (instance == null) {
+                Object object = operandStack.bottom(localVariableIndex);
+                if (object == null) {
                     // @todo hook for System.out.println & System.out.print
                     if (Helper.printHook(method, argumentTypes, operandStack)) {
                         return;
                     }
                     throw new RuntimeException("Method " + method.getName() + " can not be called by a null instance.");
+                } else if (object instanceof Heap.Instance) {
+                    Heap.Instance instance = (Heap.Instance) object;
+                    method = instance.getClazz().findMethod(method.getName(), method.getDescriptor());
+                } else if (object instanceof Heap.ArrayInstance) {
+                    // just like: new String[0].getClass()
+                    method = ((Heap.ArrayInstance) object).getArrayClazz().findMethod(method.getName(), method.getDescriptor());
+                } else {
+                    throw new RuntimeException("Call a method from a unknown instance.");
                 }
-
-                method = instance.getClazz().findMethod(method.getName(), method.getDescriptor());
 
                 if (method.getClassfileMethod().isAbstract()) {
                     throw new RuntimeException("Instruction invokevirtual call a abstract method.");
