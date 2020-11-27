@@ -67,6 +67,12 @@ final class NativeMethod {
                 }
             });
 
+        fill("java/lang/Class", "getName0", operandStack -> {
+                Heap.Instance instance = (Heap.Instance) operandStack.pop();
+                String name = instance.getTargetClazzName();
+                operandStack.push(MethodArea.Clazz.makeInstanceFrom(name));
+            });
+
         // @todo
         fill("java/lang/Class", "forName0", operandStack -> {
                 try {
