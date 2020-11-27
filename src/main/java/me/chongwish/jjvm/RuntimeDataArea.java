@@ -120,6 +120,20 @@ final class RuntimeDataArea {
         public static class Instance extends MethodArea.FieldData {
             private MethodArea.Clazz clazz;
 
+            /**
+             * This field will point to the real class name.
+             * <pre>
+             * For example:
+             * We have a Class<String>
+             *   field `clazz`: Class
+             *   field `targetClazzName`: "java/lang/String"
+             * Another List<String>
+             *   field `clazz`: List
+             *   field `targetClazzName`: "java/util/List"
+             * </pre>
+             */
+            private String targetClazzName;
+
             private Instance parent;
 
             /**
@@ -347,12 +361,13 @@ final class RuntimeDataArea {
          * <pre>
          * The Usage:
          *   ```java
-         *   Clazz.generate("classNameWithNamespace");
+         *   Clazz.generate("int", classLoader);
+         *   Clazz.generate(classNameWithNamespace, classLoader);
          *   Clazz.initialize(clazz);
          *   Instance instance = clazz.makeInstance();
-         *   clazz.findField("fieldName");
-         *   clazz.findMethod("methodName");
-         *   clazz.findInterfaceMethod("interfaceMethodName");
+         *   clazz.findField(fieldName);
+         *   clazz.findMethod(methodName);
+         *   clazz.findInterfaceMethod(interfaceMethodName);
          *   clazz.lookLike(otherClazz);
          *   clazz.isImplementOf(otherClazz);
          *   clazz.isParentOf(otherClazz);
@@ -386,10 +401,33 @@ final class RuntimeDataArea {
             private List<Integer> instanceFieldIndexList = new ArrayList<>();
 
             /**
+             * Create basic type instance of class `Clazz`.
+             * @param basicTypeName  name of basic type
+             * @param classLoader  a instance of class `ClassLoader`
+             * @return  a instance of class `Clazz`
+             */
+            public static void generate(String basicTypeName, ClassLoader classLoader) {
+                if (!_clazzCache.containsKey(basicTypeName)) {
+                    synchronized (_clazzCache) {
+                        if (!_clazzCache.containsKey(basicTypeName)) {
+                            Clazz clazz = new Clazz();
+                            clazz.className = basicTypeName;
+                            clazz.classLoader = classLoader;
+                            clazz.interfaces = new Clazz[0];
+
+                            classify(clazz);
+
+                            _clazzCache.put(basicTypeName, clazz);
+                        }
+                    }
+                }
+            }
+
+            /**
              * Create a instance of class `Clazz`.
              * @param classfileInformation  a instance of class `Classfile`
              * @param classLoader  a instance of class `ClassLoader`
-             * @return  a instance of Class `Clazz`
+             * @return  a instance of class `Clazz`
              */
             public static Clazz generate(Classfile.Information classfileInformation, ClassLoader classLoader) {
                 String className = classfileInformation.getClassName();
@@ -417,6 +455,7 @@ final class RuntimeDataArea {
             public static void classify(Clazz clazz) {
                 if (_clazzCache.containsKey(CLASS_INFO_NAME)) {
                     clazz.clazzInstance = _clazzCache.get(CLASS_INFO_NAME).makeInstance();
+                    clazz.clazzInstance.targetClazzName = clazz.className;
                 }
             }
 
@@ -427,6 +466,7 @@ final class RuntimeDataArea {
                 Clazz classClazz = _clazzCache.get(CLASS_INFO_NAME);
                 _clazzCache.forEach((name, clazz) -> {
                         clazz.clazzInstance = classClazz.makeInstance();
+                        clazz.clazzInstance.targetClazzName = clazz.className;
                     });
             }
 
@@ -454,6 +494,7 @@ final class RuntimeDataArea {
                 // generate parent instance recursively
                 do {
                     instance.clazz = clazz;
+                    instance.targetClazzName = clazz.className;
 
                     // constant pool
                     Classfile.ConstantPool[] constantPools = clazz.classfileInformation.getConstantPool();
@@ -688,6 +729,7 @@ final class RuntimeDataArea {
             public static void classify(ArrayClazz arrayClazz) {
                 if (_clazzCache.containsKey(CLASS_INFO_NAME)) {
                     arrayClazz.clazzInstance = _clazzCache.get(CLASS_INFO_NAME).makeInstance();
+                    arrayClazz.clazzInstance.targetClazzName = arrayClazz.arrayClazzName;
                 }
             }
 
@@ -698,6 +740,7 @@ final class RuntimeDataArea {
                 Clazz classClazz = _clazzCache.get(CLASS_INFO_NAME);
                 _arrayClazzCache.forEach((name, arrayClazz) -> {
                     arrayClazz.clazzInstance = classClazz.makeInstance();
+                    arrayClazz.clazzInstance.targetClazzName = arrayClazz.arrayClazzName;
                 });
             }
 

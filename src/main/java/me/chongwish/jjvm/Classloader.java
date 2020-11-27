@@ -19,11 +19,22 @@ import me.chongwish.jjvm.RuntimeDataArea.MethodArea;
  */
 final class ClassLoader {
     public ClassLoader() {
+        // auto load first class: Object
         load(MethodArea.FIRST_CLASS_NANE);
         load("java/lang/String");
+
+        // auto load second class: Class
         load(MethodArea.CLASS_INFO_NAME);
+
+        // dependency resolve
         MethodArea.Clazz.classify();
         MethodArea.ArrayClazz.classify();
+
+        // auto load basic type
+        String[] basicTypes = new String[] { "void", "boolean", "byte", "char", "short", "int", "long", "float", "double" };
+        for (String basicType: basicTypes) {
+            MethodArea.Clazz.generate(basicType, this);
+        }
     }
 
     /**
