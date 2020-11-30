@@ -14,6 +14,7 @@ public class ReflectionTest {
     public void testClass() {
         final List<String> classpaths = new ArrayList<>();
         classpaths.add("./build/classes/java/test".replace('/', File.separatorChar));
+        classpaths.add("./demo/build/classes/java/main".replace('/', File.separatorChar));
         Classpath.parse(classpaths);
 
         ThreadResource.createThreadResource();
@@ -41,5 +42,13 @@ public class ReflectionTest {
         System.out.println(new String[0].getClass().getName());
         System.out.println("".getClass().getName());
         System.out.println(new double[0].getClass().getName());
+
+        String hello = "你好,";
+        String world = "world";
+        String name = hello + world;
+        name.intern();
+        System.out.println(new Object().hashCode());
+        System.out.println(new Object().hashCode());
     }
 }
+
