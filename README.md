@@ -81,7 +81,7 @@ java -jar build/libs/jjvm.jar
 Some message was displayed in your terminal:
 
 ```shell
-Usage: jvm [-?] [-version] [-cp=<classpaths>]... mainclass [args......]
+Usage: jjvm [-?] [-version] [-cp=<classpaths>]... mainclass [args......]
 A toy of jvm
       mainclass      main class
       [args......]   arguments following the main class
@@ -106,16 +106,14 @@ public class Main {
         Integer[] array = new Integer[] { 5, 4, 1, 8, 12, 6 };
         System.out.print("before: ");
         for (int n : array) {
-            System.out.print(n);
-            System.out.print(" ");
+            System.out.print(n + " ");
         }
         System.out.println();
         Sort<Integer> fn = new Bubble<>();
         fn.sort(array);
         System.out.print("after: ");
         for (int n : array) {
-            System.out.print(n);
-            System.out.print(" ");
+            System.out.print(n + "");
         }
         System.out.println();
     }
@@ -178,12 +176,13 @@ after: 1 4 5 6 8 12
 
 ### Todo
 
-- [ ] Unfinished Instruction  0/10
+- [ ] Unfinished Instruction  (0/4)
 - [ ] Multi Thread
-- [ ] Reflection
+- [x] Reflection (A poorly implementation)
 - [ ] Native Method
-- [ ] Exception
+- [x] Exception (A poorly implementation)
 - [ ] Newer Feature come from Java 8+
+- [ ] VM System Class Initialization
 
 ### **Reference**
 

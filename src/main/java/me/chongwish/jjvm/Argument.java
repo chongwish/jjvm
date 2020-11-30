@@ -10,7 +10,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Getter
-@Command(name = "jvm", description = "A toy of jvm")
+@Command(name = "jjvm", description = "A toy of jvm")
 class Argument {
     private Argument() {}
 
