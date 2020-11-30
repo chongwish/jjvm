@@ -42,6 +42,22 @@ public class InstructionTest {
         runMethod(getMethod("testArray", clazz), interpreter);
         runMethod(getMethod("testObject", clazz), interpreter);
         runMethod(getMethod("testMethod", clazz), interpreter);
+        runMethod(getMethod("testTry", clazz), interpreter);
+    }
+
+    public static void testException() throws Exception {
+        throw new Exception();
+    }
+
+    public static void testTry() {
+        try {
+            testException();
+            System.out.println("no here");
+        } catch (Exception e) {
+            System.out.println("catch here");
+        } finally {
+            System.out.println("final");
+        }
     }
 
     public void testObject() {

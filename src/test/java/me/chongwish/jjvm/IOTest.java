@@ -47,15 +47,13 @@ public class IOTest {
         Integer[] array = new Integer[] { 5, 4, 1, 8, 12, 6 };
         System.out.print("before: ");
         for (int n : array) {
-            System.out.print(n);
-            System.out.print(" ");
+            System.out.print(n + " ");
         }
         System.out.println();
         new Bubble<Integer>().sort(array);
         System.out.print("after: ");
         for (int n : array) {
-            System.out.print(n);
-            System.out.print(" ");
+            System.out.print(n + " ");
         }
         System.out.println();
     }
