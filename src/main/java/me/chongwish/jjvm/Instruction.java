@@ -84,12 +84,12 @@ final class Instruction {
 
         // bipush
         Set.put(0x10, (frame, bytecode) -> {
-                frame.getOperandStack().push(bytecode.getU1());
+                frame.getOperandStack().push(bytecode.get());
             });
 
         // sipush
         Set.put(0x11, (frame, bytecode) -> {
-                frame.getOperandStack().push(bytecode.getChar());
+                frame.getOperandStack().push(bytecode.getShort());
             });
 
         // ldc
@@ -495,7 +495,7 @@ final class Instruction {
         // iinc
         Set.put(0x84, (frame, bytecode) -> {
                 final int index = bytecode.getU1();
-                final int value = bytecode.getU1();
+                final int value = bytecode.get();
                 final Frame.LocalVariable localVariable = frame.getLocalVariable();
                 localVariable.set(index, localVariable.getInt(index) + value);
             });
@@ -1007,8 +1007,37 @@ final class Instruction {
                 operandStack.push(arrayInstance.getSize());
             });
 
-        // @todo athrow
-        Set.put(0xbf, Helper.Unsupport());
+        // athrow
+        Set.put(0xbf, (frame, bytecode) -> {
+                Heap.Instance instance = (Heap.Instance) frame.getOperandStack().pop();
+                if (instance == null) {
+                    throw new RuntimeException("Can not throw a null exception!");
+                }
+
+                RuntimeDataArea.JavaStack javaStack = frame.getThreadResource().getJavaStack();
+
+                do {
+                    Frame currentFrame = javaStack.current();
+                    Frame.OperandStack operandStack = currentFrame.getOperandStack();
+
+                    int pc = currentFrame.getBytecode().getPc();
+                    MethodArea.Exception exception = currentFrame.getMethod().findException(instance.getClazz(), pc);
+
+                    if (exception != null && exception.getHandlePc() > 0) {
+                        operandStack.clear();
+                        operandStack.push(instance);
+                        currentFrame.getBytecode().setPc(exception.getHandlePc());
+                        return;
+                    }
+
+                    javaStack.pop();
+                } while (!javaStack.isEmpty());
+
+                // UncaughtException
+                MethodArea.Field messageField = instance.findField("detailMessage", "Ljava/lang/String;");
+                String message = String.format("Call %s.%s\n occur\t %s:%s", frame.getMethod().getClazz().getClassName(), frame.getMethod().getName(), instance.getClazz().getClassName(), messageField.getValue());
+                throw new RuntimeException(message);
+            });
 
         // checkcast
         Set.put(0xc0, (frame, bytecode) -> {
@@ -1322,10 +1351,13 @@ final class Instruction {
          */
         private static <T> BiConsumer<Frame, Bytecode> returnOperate(Function<Frame.OperandStack, T> f1) {
             return (frame, bytecode) -> {
+                frame.getOperandStack().current();
                 JavaStack javaStack = frame.getThreadResource().getJavaStack();
                 javaStack.pop();
                 Frame nextFrame = javaStack.current();
-                nextFrame.getOperandStack().push(f1.apply(frame.getOperandStack()));
+                if (nextFrame != null) {
+                    nextFrame.getOperandStack().push(f1.apply(frame.getOperandStack()));
+                }
             };
         }
 
@@ -1515,6 +1547,8 @@ final class Instruction {
                 NativeMethod.run(method.getClazz().getClassName(), method.getName(), operandStack);
                 return;
             }
+
+            // operandStack.current();
 
             // java method
             Frame nextFrame = new Frame(method, currentFrame.getThreadResource());
