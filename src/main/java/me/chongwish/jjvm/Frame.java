@@ -81,6 +81,10 @@ final class Frame {
             return stack.get(stack.size() - 1 - index);
         }
 
+        public void clear() {
+            stack.clear();
+        }
+
         public Object pop() {
             return stack.pop();
         }
