@@ -46,6 +46,24 @@ final class Bytecode {
     }
 
     /**
+     * Get a 16-bit value from bytecode, and the index plus 2.
+     */
+    public int getShort() {
+        int result = peekChar();
+        pc += 2;
+        return result;
+    }
+
+    /**
+     * Get a 16-bit unsigned value from bytecode.
+     */
+    public int peekShort() {
+        int a = code[pc];
+        int b = code[pc + 1];
+        return a << 8 | b;
+    }
+
+    /**
      * Get a 16-bit unsigned value from bytecode, and the index plus 2.
      */
     public int getChar() {
