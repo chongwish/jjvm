@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import me.chongwish.jjvm.RuntimeDataArea.Heap;
 import me.chongwish.jjvm.RuntimeDataArea.MethodArea;
+import me.chongwish.jjvm.RuntimeDataArea.ThreadResource;
 
 /**
  * Native Method
@@ -37,7 +38,21 @@ final class NativeMethod {
 
         fill("java/lang/System", "registerNatives", operandStack -> {});
 
-        fill("jdk/internal/misc/VM", "initialize", operandStack -> {});
+        fill("jdk/internal/misc/VM", "initialize", operandStack -> {
+                MethodArea.Clazz vm = MethodArea.findClazz("jdk/internal/misc/VM");
+                vm.getClassLoader().load("java/util/HashMap");
+                MethodArea.Field field = vm.findField("savedProps", "Ljava/util/Map;");
+                field.setValue(MethodArea.findClazz("java/util/HashMap").makeInstance());
+            });
+
+        fill("sun/misc/VM", "initialize", operandStack -> {
+                MethodArea.Clazz vm = MethodArea.findClazz("sun/misc/VM");
+                vm.getClassLoader().load("java/util/Properties");
+                MethodArea.Field field = vm.findField("savedProps", "Ljava/util/Properties;");
+                Heap.Instance propsInstance = (Heap.Instance) field.getValue();
+                MethodArea.Method method = propsInstance.getClazz().findMethod("setProperty", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                Interpreter.init(new ThreadResource()).read(method).with(propsInstance, propsInstance, propsInstance).execute();
+            });
 
         // @todo
         fill("jdk/internal/misc/VM", "initializeFromArchive", operandStack -> {
@@ -46,7 +61,7 @@ final class NativeMethod {
 
         fill("java/lang/Class", "getPrimitiveClass", operandStack -> {
                 Heap.Instance stringInstance = (Heap.Instance) operandStack.pop();
-                operandStack.push(MethodArea.findClazz(stringInstance.toString()).getClazzInstance());
+                operandStack.push(MethodArea.findClazz(stringInstance.toString().replace('.', '/')).getClazzInstance());
             });
 
         fill("java/lang/Class", "initClassName", operandStack -> {
@@ -73,22 +88,32 @@ final class NativeMethod {
                 operandStack.push(MethodArea.Clazz.makeInstanceFrom(name));
             });
 
-        // @todo
-        fill("java/lang/Class", "forName0", operandStack -> {
-                try {
-                    java.lang.reflect.Method method = Class.class.getDeclaredMethod("forName0", Class.forName("java.lang.String"), boolean.class, java.lang.ClassLoader.class, java.lang.Class.class);
-                    method.setAccessible(true);
-                    Object argument4 = operandStack.pop();
-                    Object argument3 = operandStack.pop();
-                    boolean argument2 = (int) operandStack.pop() > 0 ? true : false;
-                    Object argument1 = operandStack.pop();
+        fill("java/lang/Float", "floatToRawIntBits", operandStack -> {
+                operandStack.push(Float.floatToIntBits(operandStack.popFloat()));
+            });
 
-                    Heap.Instance stringInstance = (Heap.Instance) argument1;
-                    Object result = method.invoke(null, stringInstance.toString(), argument2, argument3, argument4);
-                    operandStack.push(MethodArea.findClazz("java/lang/Class").makeInstance());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        fill("java/lang/Double", "doubleToRawLongBits", operandStack -> {
+                operandStack.push(Double.doubleToLongBits(operandStack.popDouble()));
+            });
+
+        fill("java/lang/Double", "longBitsToDouble", operandStack -> {
+                operandStack.push(Double.longBitsToDouble(operandStack.popLong()));
+            });
+
+        fill("java/lang/Throwable", "fillInStackTrace", operandStack -> {
+                operandStack.popInt();
+            });
+
+        fill("java/lang/Class", "forName0", operandStack -> {
+                Object argument4 = operandStack.pop();
+                Object argument3 = operandStack.pop();
+                boolean argument2 = (int) operandStack.pop() > 0 ? true : false;
+                Object argument1 = operandStack.pop();
+
+                Heap.Instance stringInstance = (Heap.Instance) argument1;
+                String clazzName = stringInstance.toString().replace('.', '/');
+                stringInstance.getClazz().getClassLoader().load(clazzName);
+                operandStack.push(MethodArea.findClazz(clazzName).getClazzInstance());
             });
 
         // @todo
@@ -96,76 +121,79 @@ final class NativeMethod {
                 operandStack.push(0);
             });
 
-        // @todo
-        fill("jdk/internal/util/SystemProps$Raw", "platformProperties", operandStack -> {
-                operandStack.push(MethodArea.findArrayClazz("[java/lang/String;").makeInstance(100));
-            });
+        // // @todo
+        // fill("jdk/internal/util/SystemProps$Raw", "platformProperties", operandStack -> {
+        //         operandStack.push(MethodArea.findArrayClazz("[java/lang/String;").makeInstance(100));
+        //     });
 
-        // @todo
-        fill("jdk/internal/util/SystemProps$Raw", "vmProperties", operandStack -> {
-                operandStack.push(MethodArea.findArrayClazz("[java/lang/String;").makeInstance(100));
-            });
+        // // @todo
+        // fill("jdk/internal/util/SystemProps$Raw", "vmProperties", operandStack -> {
+        //         operandStack.push(MethodArea.findArrayClazz("[java/lang/String;").makeInstance(100));
+        //     });
 
-        // @todo
-        fill("java/lang/Class", "isPrimitive", operandStack -> {
-                operandStack.push(1);
-            });
+        // // @todo
+        // fill("java/lang/Class", "isPrimitive", operandStack -> {
+        //         operandStack.push(1);
+        //     });
 
-        // @todo
-        fill("java/lang/StringUTF16", "isBigEndian", operandStack -> {
-                operandStack.push(1);
-            });
+        // // @todo
+        // fill("java/lang/StringUTF16", "isBigEndian", operandStack -> {
+        //         operandStack.push(1);
+        //     });
 
-        // @todo
-        fill("java/lang/Runtime", "maxMemory", operandStack -> {
-                operandStack.push(1000000.0);
-            });
+        // // @todo
+        // fill("java/lang/Runtime", "maxMemory", operandStack -> {
+        //         operandStack.push(1000000.0);
+        //     });
 
-        // @todo
-        fill("jdk/internal/misc/Unsafe", "arrayBaseOffset0", operandStack -> {
-                try {
-                    java.lang.reflect.Method method = Class.class.getDeclaredMethod("arrayBaseOffset0", java.lang.Class.class);
-                    method.setAccessible(true);
-                    operandStack.pop();
+        // // @todo
+        // fill("jdk/internal/misc/Unsafe", "arrayBaseOffset0", operandStack -> {
+        //         try {
+        //             java.lang.reflect.Method method = Class.class.getDeclaredMethod("arrayBaseOffset0", java.lang.Class.class);
+        //             method.setAccessible(true);
+        //             operandStack.pop();
 
-                    Object result = method.invoke(null, java.lang.Class.class);
-                    operandStack.push(result);
-                } catch (Exception e) {
-                    operandStack.push(0);
-                }
-            });
+        //             Object result = method.invoke(null, java.lang.Class.class);
+        //             operandStack.push(result);
+        //         } catch (Exception e) {
+        //             operandStack.push(0);
+        //         }
+        //     });
 
-        // @todo
-        fill("jdk/internal/misc/Unsafe", "arrayIndexScale0", operandStack -> {
-                try {
-                    java.lang.reflect.Method method = Class.class.getDeclaredMethod("arrayIndexScale0", java.lang.Class.class);
-                    method.setAccessible(true);
-                    operandStack.pop();
+        // // @todo
+        // fill("jdk/internal/misc/Unsafe", "arrayIndexScale0", operandStack -> {
+        //         try {
+        //             java.lang.reflect.Method method = Class.class.getDeclaredMethod("arrayIndexScale0", java.lang.Class.class);
+        //             method.setAccessible(true);
+        //             operandStack.pop();
 
-                    Object result = method.invoke(null, java.lang.Class.class);
-                    operandStack.push(result);
-                } catch (Exception e) {
-                    operandStack.push(0);
-                }
-            });
+        //             Object result = method.invoke(null, java.lang.Class.class);
+        //             operandStack.push(result);
+        //         } catch (Exception e) {
+        //             operandStack.push(0);
+        //         }
+        //     });
 
-        // @todo
         fill("java/lang/System", "arraycopy", operandStack -> {
-                try {
-                    java.lang.reflect.Method method = System.class.getDeclaredMethod("arraycopy", Object.class, int.class, Object.class, int.class, int.class);
-                    method.setAccessible(true);
-                    int argument5 = operandStack.popInt();
-                    int argument4 = operandStack.popInt();
-                    Object argument3 = ((Heap.ArrayInstance) operandStack.pop()).getFields();
-                    int argument2 = operandStack.popInt();
-                    Object argument1 = ((Heap.ArrayInstance) operandStack.pop()).getFields();
+                // @todo check
 
-                    method.invoke(null, argument1, argument2, argument3, argument4, argument5);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                int argument5 = operandStack.popInt();
+                int argument4 = operandStack.popInt();
+                int[] argument3 = (int[]) ((Heap.ArrayInstance) operandStack.pop()).getFields();
+                int argument2 = operandStack.popInt();
+                int[] argument1 = (int[]) ((Heap.ArrayInstance) operandStack.pop()).getFields();
+
+                for (int i = argument4, j = argument2, k = 0; k < argument5; ++i, ++j, ++k) {
+                    argument3[i] = argument1[j];
                 }
-
             });
 
+        // @todo
+        fill("java/lang/String", "intern", operandStack -> {
+            });
+
+        fill("java/lang/Object", "hashCode", operandStack -> {
+                operandStack.push(operandStack.pop().hashCode());
+            });
     }
 }
