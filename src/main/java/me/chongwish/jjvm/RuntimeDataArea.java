@@ -80,6 +80,10 @@ final class RuntimeDataArea {
             return stack.pop();
         }
 
+        public void clear() {
+            stack.clear();
+        }
+
         public boolean isEmpty() {
             return stack.isEmpty();
         }
@@ -570,7 +574,7 @@ final class RuntimeDataArea {
                             field.setValue(stringValue.hashCode());
                             break;
                         case "coder":
-                            field.setValue(1);
+                            field.setValue(0);
                             break;
                     }
                 }
@@ -746,6 +750,10 @@ final class RuntimeDataArea {
             }
 
             /**
+             * Array method come from the java class `java/lang/Object`.
+             * @param name  method name
+             * @param descriptor  method descriptor
+             * @return  a instance of class `Method`
              */
             public Method findMethod(String name, String descriptor) {
                 return _clazzCache.get(CLASS_INFO_NAME).findMethod(name, descriptor);
@@ -862,6 +870,8 @@ final class RuntimeDataArea {
 
             private byte[] code;
 
+            private Exception[] exceptionTable;
+
             /**
              * Create a array of instance of class `Method` and fill them to the given `clazz`.
              * @param clazz  a instance of class `Clazz`
@@ -890,6 +900,17 @@ final class RuntimeDataArea {
                             method.code = codeAttribute.getCode();
                             method.maxStack = codeAttribute.getMaxStack();
                             method.maxLocals = codeAttribute.getMaxLocals();
+                            // exception
+                            method.exceptionTable = new Exception[codeAttribute.getExceptionTableLength()];
+                            int exceptionIndex = 0;
+                            for (int[] exception: codeAttribute.getExceptionTable()) {
+                                method.exceptionTable[exceptionIndex] = new Exception();
+                                method.exceptionTable[exceptionIndex].startPc = exception[0];
+                                method.exceptionTable[exceptionIndex].endPc = exception[1];
+                                method.exceptionTable[exceptionIndex].handlePc = exception[2];
+                                method.exceptionTable[exceptionIndex].catchType = exception[3];
+                                ++exceptionIndex;
+                            }
                             break;
                         }
                     }
@@ -898,6 +919,28 @@ final class RuntimeDataArea {
                 clazz.methods = methods;
 
                 return methods;
+            }
+
+            /**
+             * Get a instance of class `Exception` by the given information.
+             * @param clazz  a instance of class `Clazz`
+             * @param pc  bytecode pc
+             * @return  a instance of class `Exception`
+             */
+            public Exception findException(Clazz exceptionClazz, int pc) {
+                RuntimeConstantPool runtimeConstantPool = MethodArea.findRuntimeConstantPool(clazz.className);
+                for (Exception exception: exceptionTable) {
+                    Clazz catchTypeClazz = null;
+                    if (exception.catchType != 0) {
+                        catchTypeClazz = runtimeConstantPool.dereferenceClazz(exception.catchType);
+                    }
+                    if (pc >= exception.startPc && pc <= exception.endPc) {
+                        if (catchTypeClazz == null || catchTypeClazz == exceptionClazz || catchTypeClazz.isParentOf(exceptionClazz)) {
+                            return exception;
+                        }
+                    }
+                }
+                return null;
             }
 
             /**
@@ -1042,6 +1085,17 @@ final class RuntimeDataArea {
             public boolean isAccessibleTo(Clazz otherClazz) {
                 return true;
             }
+        }
+
+        /**
+         * A logic data structure for discribing a java exception.
+         */
+        @Getter
+        final public static class Exception {
+            private int startPc;
+            private int endPc;
+            private int handlePc;
+            private int catchType;
         }
 
         /**
