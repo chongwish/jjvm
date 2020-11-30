@@ -44,6 +44,20 @@ final class Interpreter {
     }
 
     /**
+     * Fill some argument to current frame.
+     * @param args  arguments array
+     * @return  a instance of class `Interpreter`
+     */
+    public Interpreter with(Object... args) {
+        Frame frame = threadResource.getJavaStack().current();
+        Frame.LocalVariable localVariable = frame.getLocalVariable();
+        for (int i = 0; i < args.length; ++i) {
+            localVariable.set(i, args[i]);
+        }
+        return this;
+    }
+
+    /**
      * Exceute the bytecode.
      */
     public void execute() {
