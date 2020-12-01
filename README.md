@@ -2,7 +2,9 @@
 
 ### Instruction
 
-**Fewer than 20 files make a JVM for yourself!**
+**Fewer than 20 files make a JVM for yourself! Now there are only 11 files!**
+
+**Support Java 8, Java 11 and Java 14!**
 
 ### Purpose
 
@@ -58,8 +60,8 @@ src/main/java/me/chongwish/jjvm/
 Mine is that:
 
 - emacs + lsp-java
-- openjdk 14 & openjdk 8
-- gradle
+- openjdk 14 & openjdk 11 & openjdk 8
+- gradle version 6
 - archlinux container on gentoo host & windows 10
 
 I haven't tested other jdk version.
