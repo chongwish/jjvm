@@ -2,16 +2,15 @@ package me.chongwish.jjvm;
 
 import java.util.Stack;
 
-import lombok.Getter;
 import me.chongwish.jjvm.RuntimeDataArea.MethodArea;
 import me.chongwish.jjvm.RuntimeDataArea.ThreadResource;
 import me.chongwish.jjvm.RuntimeDataArea.MethodArea.Method;
 import me.chongwish.jjvm.RuntimeDataArea.MethodArea.RuntimeConstantPool;
 
 /**
- * A frame is used to store data and partial results, as well as to perform dynamic linking, return values for methods, and dispatch exceptions.
+ * A frame is used to store data and partial results, as well as to perform dynamic linking, return values for methods,
+ * and dispatch exceptions.
  */
-@Getter
 final class Frame {
     private OperandStack operandStack;
     private LocalVariable localVariable;
@@ -23,6 +22,30 @@ final class Frame {
      * Runtime Constant reference of current method
      */
     private RuntimeConstantPool runtimeConstantPool;
+
+    public OperandStack getOperandStack() {
+        return operandStack;
+    }
+
+    public LocalVariable getLocalVariable() {
+        return localVariable;
+    }
+
+    public ThreadResource getThreadResource() {
+        return threadResource;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Bytecode getBytecode() {
+        return bytecode;
+    }
+
+    public RuntimeConstantPool getRuntimeConstantPool() {
+        return runtimeConstantPool;
+    }
 
     public Frame(Method method, ThreadResource threadResource) {
         operandStack = new OperandStack();
@@ -38,19 +61,20 @@ final class Frame {
      */
     final public static class OperandStack {
         /**
-         * Stack stack can store a value of type boolean, byte, char, short, int, float, reference in a slot, a value of type long or double in two slots.
+         * Stack stack can store a value of type boolean, byte, char, short, int, float, reference in a slot, a value of
+         * type long or double in two slots.
          */
         private Stack<Object> stack = new Stack<>();
 
         public void push(Object value) {
             if (value instanceof Integer) {
-                push((int) value);
+                push((int)value);
             } else if (value instanceof Float) {
-                push((float) value);
+                push((float)value);
             } else if (value instanceof Long) {
-                push((long) value);
+                push((long)value);
             } else if (value instanceof Double) {
-                push((double) value);
+                push((double)value);
             } else {
                 stack.push(value);
             }
@@ -65,8 +89,8 @@ final class Frame {
         }
 
         public void push(long value) {
-            push((int) value);
-            push((int) (value >> 32));
+            push((int)value);
+            push((int)(value >> 32));
         }
 
         public void push(double value) {
@@ -90,7 +114,7 @@ final class Frame {
         }
 
         public int popInt() {
-            return (int) pop();
+            return (int)pop();
         }
 
         public float popFloat() {
@@ -117,7 +141,8 @@ final class Frame {
      */
     final public static class LocalVariable {
         /**
-         * Array variables can store a value of type boolean, byte, char, short, int, float, reference in a slot, a value of type long or double in two slots.
+         * Array variables can store a value of type boolean, byte, char, short, int, float, reference in a slot, a
+         * value of type long or double in two slots.
          */
         private Object[] variables;
 
@@ -127,13 +152,13 @@ final class Frame {
 
         public void set(int i, Object value) {
             if (value instanceof Integer) {
-                set(i, (int) value);
+                set(i, (int)value);
             } else if (value instanceof Float) {
-                set(i, (float) value);
+                set(i, (float)value);
             } else if (value instanceof Long) {
-                set(i, (long) value);
+                set(i, (long)value);
             } else if (value instanceof Double) {
-                set(i, (double) value);
+                set(i, (double)value);
             } else {
                 variables[i] = value;
             }
@@ -148,8 +173,8 @@ final class Frame {
         }
 
         public void set(int i, long value) {
-            set(i, (int) value);
-            set(i + 1, (int) (value >> 32));
+            set(i, (int)value);
+            set(i + 1, (int)(value >> 32));
         }
 
         public void set(int i, double value) {
@@ -161,7 +186,7 @@ final class Frame {
         }
 
         public int getInt(int i) {
-            return (int) variables[i];
+            return (int)variables[i];
         }
 
         public float getFloat(int i) {
@@ -178,5 +203,4 @@ final class Frame {
             return Double.longBitsToDouble(getLong(i));
         }
     }
-
 }

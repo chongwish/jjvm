@@ -29,9 +29,9 @@ public class ReflectionTest {
         ThreadResource threadResource = ThreadResource.getCurrentThreadResource();
         Interpreter interpreter = Interpreter.init(threadResource);
         interpreter.read(method).execute();
-
     }
 
+    @SuppressWarnings("unused")
     private void getClassName() {
         System.out.println(int.class.getName());
         System.out.println(int[].class.getName());
@@ -51,4 +51,3 @@ public class ReflectionTest {
         System.out.println(new Object().hashCode());
     }
 }
-

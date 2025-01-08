@@ -6,27 +6,33 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Runtime data areas for java.
- *
- * <pre>
+ * <p>
  * There are 3 section here:
- *   1. ThreadResource (Thread owened)
- *      1.1. Program Counter Register
- *      1.2. Java Stack
- *      1.3. Native Method Stack
- *   2. Heap (Memory shared)
- *      Instance and ArrayInstance will be retained here
- *   3. Method Area (Memory shared)
- *      Method & Field & Clazz & Array & Runtime Constant Pool will be retained here
- * </pre>
+ * <ol>
+ * <li>
+ * ThreadResource (Thread owened)
+ * <ol>
+ * <li>Program Counter Register</li>
+ * <li>Java Stack</li>
+ * <li>Native Method Stack</li>
+ * </ol>
+ * </li>
+ * <li>
+ * Heap (Memory shared)
+ * <p>
+ * Instance and ArrayInstance will be retained here
+ * </li>
+ * <li>
+ * Method Area (Memory shared)
+ * <p>
+ * Method & Field & Clazz & Array & Runtime Constant Pool will be retained here
+ * </li>
+ * </ol>
  */
 final class RuntimeDataArea {
     private volatile static Map<Long, ThreadResource> _threadResourceCache = new HashMap<>();
@@ -34,7 +40,6 @@ final class RuntimeDataArea {
     /**
      * Class Thread is used to store Program Counter Register and Java Stack
      */
-    @Getter
     final public static class ThreadResource {
         public ThreadResource() {}
 
@@ -51,6 +56,14 @@ final class RuntimeDataArea {
          * Java Stack
          */
         private JavaStack javaStack = new JavaStack();
+
+        public int getPcRegister() {
+            return pcRegister;
+        }
+
+        public JavaStack getJavaStack() {
+            return javaStack;
+        }
 
         /**
          * Create a instance of class `ThreadResource` for a thread. Every thread only can hold one instance.
@@ -94,8 +107,7 @@ final class RuntimeDataArea {
     }
 
     // @todo
-    final public static class NativeMethodStack {
-    }
+    final public static class NativeMethodStack {}
 
     /**
      * A logic data structure for discribing a java heap.
@@ -103,69 +115,84 @@ final class RuntimeDataArea {
     final public static class Heap {
         /**
          * A logic data structure for discribing a java instance.
-         * <pre>
-         * For example:
-         *   A java instance:
-         *
-         *   ```java
-         *   User user = new User();
-         *   user.name = "chongwish";
-         *   ```
-         *
-         *   A instance of Class `Instance`:
-         *
-         *   ```java
-         *   Instance userInstance = ...;
-         *   userInstance.fields[nameIndex] = "chongwish";
-         *   ```
-         * </pre>
+         * <p>
+         * <b>Example:</b>
+         * <p>
+         * A java instance:
+         * <p>
+         * {@code User user = new User();}
+         * <p>
+         * {@code user.name = "chongwish";}
+         * <p>
+         * A instance of Class {@code Instance}:
+         * <p>
+         * {@code Instance userInstance = ...;}
+         * <p>
+         * {@code userInstance.fields[nameIndex] = "chongwish";}
          */
-        @Getter
         public static class Instance extends MethodArea.FieldData {
             private MethodArea.Clazz clazz;
 
             /**
              * This field will point to the real class name.
-             * <pre>
-             * For example:
-             * We have a Class<String>
-             *   field `clazz`: Class
-             *   field `targetClazzName`: "java/lang/String"
-             * Another List<String>
-             *   field `clazz`: List
-             *   field `targetClazzName`: "java/util/List"
-             * </pre>
+             * <p>
+             * <b>Example:</b>
+             * <p>
+             * {@code Class<String>} will be:
+             * <ul>
+             * <li>field {@code clazz}: {@code Class}</li>
+             * <li>field {@code targetClazzName}: {@code "java/lang/String"}</li>
+             * </ul>
+             * Another {@code List<String>} will be:
+             * <ul>
+             * <li>field {@code clazz}: {@code List}</li>
+             * <li>field {@code targetClazzName}: {@code "java/util/List"}</li>
+             * </ul>
              */
             private String targetClazzName;
 
             private Instance parent;
 
+            public MethodArea.Clazz getClazz() {
+                return clazz;
+            }
+
+            public String getTargetClazzName() {
+                return targetClazzName;
+            }
+
+            public Instance getParent() {
+                return parent;
+            }
+
             /**
-             * Just like the java operator `instanceof`.
-             * @param otherClazz  target class type
-             * @return  is this instance the target class type
+             * Just like the java operator {@code instanceof}.
+             * 
+             * @param otherClazz
+             *        target class type
+             * @return is this instance the target class type
              */
             public boolean isInstanceOf(MethodArea.Clazz otherClazz) {
                 return clazz.lookLike(otherClazz);
             }
 
             /**
-             * Convert java class `java/lang/String` to a string.
+             * Convert java class {@code java/lang/String} to a string.
              */
             public String toString() {
                 if (clazz.className.equals("java/lang/String")) {
                     Heap.ArrayInstance charsInstance = null;
                     for (MethodArea.Field stringField : this.getFields()) {
                         if (stringField.getName().equals("value")) {
-                            charsInstance = (Heap.ArrayInstance) stringField.getValue();
+                            charsInstance = (Heap.ArrayInstance)stringField.getValue();
                             break;
                         }
                     }
 
-                    int[] ints = (int[]) charsInstance.getFields();
+                    int[] ints = (int[])charsInstance.getFields();
                     char[] chars = new char[ints.length];
                     for (int i = 0; i < chars.length; ++i) {
-                        chars[i] = (char) ints[i];
+                        chars[i] = (char)ints[i];
                     }
 
                     return String.valueOf(chars);
@@ -177,21 +204,21 @@ final class RuntimeDataArea {
         /**
          * A logic data structure for discribing a java array instance.
          */
-        @Getter
         public static class ArrayInstance {
             private MethodArea.ArrayClazz arrayClazz;
 
             /**
              * Array data storage.
-             * <pre>
+             * <p>
              * Data can be:
-             *   int[] int[][] ...
-             *   double[] double[] ...
-             *   ...
-             *   Object[] Object[][] ...
-             * </pre>
+             * <p>
+             * <ul>
+             * <li>{@code int[] int[][] ...}</li>
+             * <li>{@code double[] double[] ...}</li>
+             * <li>{@code ...}</li>
+             * <li>{@code Object[] Object[][] ...}</li>
+             * </ul>
              */
-            @Setter
             private Object fields;
 
             /**
@@ -199,10 +226,28 @@ final class RuntimeDataArea {
              */
             private int size;
 
+            public MethodArea.ArrayClazz getArrayClazz() {
+                return arrayClazz;
+            }
+
+            public Object getFields() {
+                return fields;
+            }
+
+            public void setFields(Object fields) {
+                this.fields = fields;
+            }
+
+            public int getSize() {
+                return size;
+            }
+
             /**
              * Just like the java array operator `instanceof`.
-             * @param otherClazz  target class type
-             * @return  is this instance the target class type
+             * 
+             * @param otherClazz
+             *        target class type
+             * @return is this instance the target class type
              */
             public boolean isInstanceOf(String name) {
                 return arrayClazz.lookLike(name);
@@ -212,15 +257,16 @@ final class RuntimeDataArea {
 
     /**
      * A logic data structure for discribing a java method area.
-     * <pre>
-     * The Usage:
-     *   ```java
-     *   MethoadArea.store(clazz);
-     *   MethoadArea.store(runtimeConstantPool);
-     *   MethoadArea.findClazz("classNameWithNamespace");
-     *   MethoadArea.findArrayClazz("arrayClassName");
-     *   ```
-     * </pre>
+     * <p>
+     * <b>Usage:</b>
+     * <p>
+     * {@code MethoadArea.store(clazz);}
+     * <p>
+     * {@code MethoadArea.store(runtimeConstantPool);}
+     * <p>
+     * {@code MethoadArea.findClazz("classNameWithNamespace");}
+     * <p>
+     * {@code MethoadArea.findArrayClazz("arrayClassName");}
      */
     final public static class MethodArea {
         final public static String FIRST_CLASS_NANE = "java/lang/Object";
@@ -242,9 +288,11 @@ final class RuntimeDataArea {
         private static volatile Map<String, RuntimeConstantPool> _runtimeConstantPoolCache = new HashMap<>();
 
         /**
-         * Record the given instance of class `Clazz`.
-         * @param clazz  a instance of class `Clazz`
-         * @return  has been the clazz existed
+         * Record the given instance of class {@code Clazz}.
+         * 
+         * @param clazz
+         *        a instance of class {@code Clazz}
+         * @return has been the clazz existed
          */
         public static boolean store(Clazz clazz) {
             String className = clazz.className;
@@ -259,10 +307,11 @@ final class RuntimeDataArea {
             return false;
         }
 
-
         /**
-         * Record the given instance of class `RuntimeConstantPool`.
-         * @param runtimeConstantPool  a instance of class `RuntimeConstantPool`
+         * Record the given instance of class {@code RuntimeConstantPool}.
+         * 
+         * @param runtimeConstantPool
+         *        a instance of class {@code RuntimeConstantPool}
          */
         public static void store(RuntimeConstantPool runtimeConstantPool) {
             String className = runtimeConstantPool.getClazz().className;
@@ -276,27 +325,34 @@ final class RuntimeDataArea {
         }
 
         /**
-         * Get a instance of class `Clazz` by the given name.
-         * @param className  the given class name
-         * @return  a instance of class `Clazz`
+         * Get a instance of class {@code Clazz} by the given name.
+         * 
+         * @param className
+         *        the given class name
+         * @return a instance of class {@code Clazz}
          */
         public static Clazz findClazz(String className) {
             return _clazzCache.get(className);
         }
 
         /**
-         * Get a instance of class `RuntimeConstantPool` by the given name.
-         * @param className  the given class name
-         * @return  a instance of class `RuntimeConstantPool`
+         * Get a instance of class {@code RuntimeConstantPool} by the given name.
+         * 
+         * @param className
+         *        the given class name
+         * @return a instance of class {@code RuntimeConstantPool}
          */
         public static RuntimeConstantPool findRuntimeConstantPool(String className) {
             return _runtimeConstantPoolCache.get(className);
         }
 
         /**
-         * Get a instance of class `ArrayClazz` by the given name. If this instance is not exist, it will generate a new instance automatic.
-         * @param arrayClazzName  the given array class name
-         * @return  a instance of class `ArrayClazz`
+         * Get a instance of class {@code ArrayClazz} by the given name. If this instance is not exist, it will generate
+         * a new instance automatic.
+         * 
+         * @param arrayClazzName
+         *        the given array class name
+         * @return a instance of class {@code ArrayClazz}
          */
         public static ArrayClazz findArrayClazz(String arrayClazzName) {
             if (!arrayClazzName.startsWith("[")) {
@@ -311,18 +367,27 @@ final class RuntimeDataArea {
         /**
          * A logic data storage of field of the java instance and java class.
          */
-        @Getter
-        @Setter
         abstract private static class FieldData {
             private Field[] fields;
 
             abstract public FieldData getParent();
 
+            public Field[] getFields() {
+                return fields;
+            }
+
+            public void setFields(Field[] fields) {
+                this.fields = fields;
+            }
+
             /**
-             * Get a instance of class `Field` by the given information. It will search all its inheritance tree.
-             * @param name  field name
-             * @param descriptor  field descriptor
-             * @return  a instance of class `Field`
+             * Get a instance of class {@code Field} by the given information. It will search all its inheritance tree.
+             * 
+             * @param name
+             *        field name
+             * @param descriptor
+             *        field descriptor
+             * @return a instance of class {@code Field}
              */
             public Field findField(String name, String descriptor) {
                 FieldData object = this;
@@ -339,14 +404,17 @@ final class RuntimeDataArea {
             }
 
             /**
-             * The helper method to create a array of instance of class `Field`.
-             * <pre>
-             * The instance of class `Classfile` include static fields and instance fields.
+             * The helper method to create a array of instance of class {@code Field}.
+             * <p>
+             * The instance of class {@code Classfile} include static fields and instance fields.
+             * <p>
              * The indexList would be a list of static field list or a list of instance field index.
-             * </pre>
-             * @param indexList  a list include the index of a array
-             * @param classfileInformation  a instance of class `Classfile`
-             * @return  a array of instance of class `Field`
+             * 
+             * @param indexList
+             *        a list include the index of a array
+             * @param classfileInformation
+             *        a instance of class {@code Classfile}
+             * @return a array of instance of class {@code Field}
              */
             protected Field[] generateFields(List<Integer> indexList, Classfile.Information classfileInformation) {
                 // classfile constant pool
@@ -360,7 +428,7 @@ final class RuntimeDataArea {
                     Classfile.Field classfileField = classfileFields[indexList.get(i)];
                     Field field = new Field();
                     field.classfileField = classfileField;
-                    field.clazz = (Clazz) this;
+                    field.clazz = (Clazz)this;
                     field.name = constantPools[classfileField.getNameIndex()].getValue().toString();
                     field.descriptor = constantPools[classfileField.getDescriptorIndex()].getValue().toString();
                     fields[i] = field;
@@ -372,37 +440,41 @@ final class RuntimeDataArea {
 
         /**
          * A logic data structure for discribing a java class.
-         * <pre>
-         * For example:
-         *   A java instance:
-         *
-         *   ```java
-         *   User.prefix = "name: ";
-         *   ```
-         *   A instance of class `Clazz`:
-         *
-         *   ```java
-         *   Clazz userClazz = ...;
-         *   userClazz.fields[prefixIndex] = "name: ";
-         *   ```
-         * </pre>
-         * <pre>
-         * The Usage:
-         *   ```java
-         *   Clazz.generate("int", classLoader);
-         *   Clazz.generate(classNameWithNamespace, classLoader);
-         *   Clazz.initialize(clazz);
-         *   Instance instance = clazz.makeInstance();
-         *   clazz.findField(fieldName);
-         *   clazz.findMethod(methodName);
-         *   clazz.findInterfaceMethod(interfaceMethodName);
-         *   clazz.lookLike(otherClazz);
-         *   clazz.isImplementOf(otherClazz);
-         *   clazz.isParentOf(otherClazz);
-         *   ```
-         * </pre>
+         * <p>
+         * <b>Example:</b>
+         * <p>
+         * A java instance:
+         * <P>
+         * {@code User.prefix = "name: ";}
+         * <p>
+         * A instance of class {@code Clazz}:
+         * <p>
+         * {@code Clazz userClazz = ...;}
+         * <p>
+         * {@code userClazz.fields[$prefixIndex] = "name: ";}
+         * <p>
+         * <b>Usage:</b>
+         * <p>
+         * {@code Clazz.generate("int", classLoader);}
+         * <p>
+         * {@code Clazz.generate(classNameWithNamespace, classLoader);}
+         * <p>
+         * {@code Clazz.initialize(clazz);}
+         * <p>
+         * {@code Instance instance = clazz.makeInstance();}
+         * <p>
+         * {@code clazz.findField(fieldName);}
+         * <p>
+         * {@code clazz.findMethod(methodName);}
+         * <p>
+         * {@code clazz.findInterfaceMethod(interfaceMethodName);}
+         * <p>
+         * {@code clazz.lookLike(otherClazz);}
+         * <p>
+         * {@code clazz.isImplementOf(otherClazz);}
+         * <p>
+         * {@code clazz.isParentOf(otherClazz);}
          */
-        @Getter
         final public static class Clazz extends FieldData {
             private ClassLoader classLoader;
 
@@ -428,11 +500,50 @@ final class RuntimeDataArea {
              */
             private List<Integer> instanceFieldIndexList = new ArrayList<>();
 
+            public ClassLoader getClassLoader() {
+                return classLoader;
+            }
+
+            public String getClassName() {
+                return className;
+            }
+
+            public Clazz getParent() {
+                return parent;
+            }
+
+            public Classfile.Information getClassfileInformation() {
+                return classfileInformation;
+            }
+
+            public Clazz[] getInterfaces() {
+                return interfaces;
+            }
+
+            public Method[] getMethods() {
+                return methods;
+            }
+
+            public Heap.Instance getClazzInstance() {
+                return clazzInstance;
+            }
+
+            public List<Integer> getStaticFieldIndexList() {
+                return staticFieldIndexList;
+            }
+
+            public List<Integer> getInstanceFieldIndexList() {
+                return instanceFieldIndexList;
+            }
+
             /**
-             * Create basic type instance of class `Clazz`.
-             * @param basicTypeName  name of basic type
-             * @param classLoader  a instance of class `ClassLoader`
-             * @return  a instance of class `Clazz`
+             * Create basic type instance of class {@code Clazz}.
+             * 
+             * @param basicTypeName
+             *        name of basic type
+             * @param classLoader
+             *        a instance of class {@code ClassLoader}
+             * @return a instance of class {@code Clazz}
              */
             public static void generate(String basicTypeName, ClassLoader classLoader) {
                 if (!_clazzCache.containsKey(basicTypeName)) {
@@ -452,10 +563,13 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Create a instance of class `Clazz`.
-             * @param classfileInformation  a instance of class `Classfile`
-             * @param classLoader  a instance of class `ClassLoader`
-             * @return  a instance of class `Clazz`
+             * Create a instance of class {@code Clazz}.
+             * 
+             * @param classfileInformation
+             *        a instance of class {@code Classfile}
+             * @param classLoader
+             *        a instance of class {@code ClassLoader}
+             * @return a instance of class {@code Clazz}
              */
             public static Clazz generate(Classfile.Information classfileInformation, ClassLoader classLoader) {
                 String className = classfileInformation.getClassName();
@@ -466,7 +580,8 @@ final class RuntimeDataArea {
                 clazz.classfileInformation = classfileInformation;
 
                 // super class && interfaces, classloader will load super class & interface first
-                clazz.parent = className.equals(FIRST_CLASS_NANE) ? null : _clazzCache.get(classfileInformation.getSuperClassName());
+                clazz.parent = className.equals(FIRST_CLASS_NANE) ? null
+                        : _clazzCache.get(classfileInformation.getSuperClassName());
                 List<String> interfaceNameList = classfileInformation.getInterfaceNameList();
                 clazz.interfaces = new Clazz[interfaceNameList.size()];
                 for (int i = 0; i < interfaceNameList.size(); ++i) {
@@ -477,8 +592,10 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Assign a instance of java class to instance of class `Clazz`.
-             * @param clazz  a instance of class `Clazz`
+             * Assign a instance of java class to instance of class {@code Clazz}.
+             * 
+             * @param clazz
+             *        a instance of class {@code Clazz}
              */
             public static void classify(Clazz clazz) {
                 if (_clazzCache.containsKey(CLASS_INFO_NAME)) {
@@ -488,19 +605,21 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Assign instance of java class for every loaded instance of class `Clazz`.
+             * Assign instance of java class for every loaded instance of class {@code Clazz}.
              */
             public static void classify() {
                 Clazz classClazz = _clazzCache.get(CLASS_INFO_NAME);
                 _clazzCache.forEach((name, clazz) -> {
-                        clazz.clazzInstance = classClazz.makeInstance();
-                        clazz.clazzInstance.targetClazzName = clazz.className;
-                    });
+                    clazz.clazzInstance = classClazz.makeInstance();
+                    clazz.clazzInstance.targetClazzName = clazz.className;
+                });
             }
 
             /**
              * Call the static initializer of a java class.
-             * @param clazz  a instance of Class `Clazz`
+             * 
+             * @param clazz
+             *        a instance of Class {@code Clazz}
              */
             public static void initialize(Clazz clazz) {
                 Method method = clazz.findMethod("<clinit>", "()V");
@@ -510,8 +629,10 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Generate a instance of class `Instance` for this instance of class `Clazz`. If this class has a super class, it will generate a instance for its super class recursively.
-             * @return  a instance of class `Instance`.
+             * Generate a instance of class {@code Instance} for this instance of class {@code Clazz}. If this class has
+             * a super class, it will generate a instance for its super class recursively.
+             * 
+             * @return a instance of class {@code Instance}.
              */
             public Heap.Instance makeInstance() {
                 Clazz clazz = this;
@@ -541,7 +662,7 @@ final class RuntimeDataArea {
                     }
                     instance.setFields(fields);
 
-                    clazz = (Clazz) clazz.getParent();
+                    clazz = (Clazz)clazz.getParent();
                     if (clazz != null) {
                         instance.parent = new Heap.Instance();
                         instance = instance.getParent();
@@ -554,14 +675,13 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Generate a instance of class `Instance` from a string.
-             * @param stringValue  a string
+             * Generate a instance of class {@code Instance} from a string.
              */
             public static Heap.Instance makeInstanceFrom(String stringValue) {
                 char[] chars = stringValue.toCharArray();
                 Heap.Instance stringInstance = MethodArea.findClazz("java/lang/String").makeInstance();
                 Heap.ArrayInstance charsInstance = MethodArea.findArrayClazz("[B").makeInstance(chars.length);
-                int[] fields = (int[]) charsInstance.getFields();
+                int[] fields = (int[])charsInstance.getFields();
                 for (int i = 0; i < fields.length; ++i) {
                     fields[i] = chars[i];
                 }
@@ -582,30 +702,37 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Get a instance of class `Method` by the given information. It will search all its inheritance tree.
-             * @param name  method name
-             * @param descriptor  method descriptor
-             * @return  a instance of class `Method`
+             * Get a instance of class {@code Method} by the given information. It will search all its inheritance tree.
+             * 
+             * @param name
+             *        method name
+             * @param descriptor
+             *        method descriptor
+             * @return a instance of class {@code Method}
              */
             public Method findMethod(String name, String descriptor) {
                 Clazz clazz = this;
                 do {
-                    for (Method method: clazz.methods) {
+                    for (Method method : clazz.methods) {
                         if (method.name.equals(name) && method.descriptor.equals(descriptor)) {
                             return method;
                         }
                     }
-                    clazz = (Clazz) clazz.getParent();
+                    clazz = (Clazz)clazz.getParent();
                 } while (clazz != null);
 
                 return findInterfaceMethod(name, descriptor);
             }
 
             /**
-             * Get a instance of class `Method` by the given information, and this instance must be a interface method instance. It will search all its inheritance tree.
-             * @param name  interface method name
-             * @param descriptor  interface method descriptor
-             * @return  a instance of class `Method`
+             * Get a instance of class {@code Method} by the given information, and this instance must be a interface
+             * method instance. It will search all its inheritance tree.
+             * 
+             * @param name
+             *        interface method name
+             * @param descriptor
+             *        interface method descriptor
+             * @return a instance of class {@code Method}
              */
             public Method findInterfaceMethod(String name, String descriptor) {
                 Clazz clazz = this;
@@ -624,7 +751,7 @@ final class RuntimeDataArea {
                             }
                         }
                     }
-                    clazz = (Clazz) clazz.getParent();
+                    clazz = (Clazz)clazz.getParent();
                 } while (clazz != null);
 
                 return null;
@@ -632,8 +759,10 @@ final class RuntimeDataArea {
 
             /**
              * Verifing this class has a interface that the given one or this class is a child class of the given class.
-             * @param otherClazz  a instance of class `Clazz`
-             * @return  is it a child class of the given class or has it implemented the interface that the given one
+             * 
+             * @param otherClazz
+             *        a instance of class {@code Clazz}
+             * @return is it a child class of the given class or has it implemented the interface that the given one
              */
             public boolean lookLike(Clazz otherClazz) {
                 Clazz clazz = this;
@@ -649,8 +778,10 @@ final class RuntimeDataArea {
 
             /**
              * Verifing this class has a interface that the given one.
-             * @param otherClazz  a interface instance of class `Clazz`
-             * @return  has it implemented the interface
+             * 
+             * @param otherClazz
+             *        a interface instance of class {@code Clazz}
+             * @return has it implemented the interface
              */
             public boolean isImplementOf(Clazz otherClazz) {
                 Clazz clazz = this;
@@ -660,12 +791,12 @@ final class RuntimeDataArea {
                 }
 
                 do {
-                    for (Clazz interfaceClazz: clazz.interfaces) {
+                    for (Clazz interfaceClazz : clazz.interfaces) {
                         if (interfaceClazz == otherClazz) {
                             return true;
                         }
                     }
-                    clazz = (Clazz) clazz.getParent();
+                    clazz = (Clazz)clazz.getParent();
                 } while (clazz != null);
 
                 return false;
@@ -673,16 +804,18 @@ final class RuntimeDataArea {
 
             /**
              * Verifing this class is a child class of the given one.
-             * @param otherClazz  a instance of class `Clazz`
-             * @return  is it a child class of the given class
+             * 
+             * @param otherClazz
+             *        a instance of class {@code Clazz}
+             * @return is it a child class of the given class
              */
             public boolean isParentOf(Clazz otherClazz) {
-                Clazz parent = (Clazz) this.getParent();
+                Clazz parent = (Clazz)this.getParent();
                 do {
                     if (parent == otherClazz) {
                         return true;
                     }
-                    parent = (Clazz) parent.getParent();
+                    parent = (Clazz)parent.getParent();
                 } while (parent != null);
                 return false;
             }
@@ -695,17 +828,17 @@ final class RuntimeDataArea {
 
         /**
          * A logic data structure for discribing a java array class.
-         * <pre>
-         * The Usage:
-         *   ```java
-         *   ArrayClazz.generate("arrayClassName");
-         *   arrayClazz.lookLike("arrayClassName");
-         *   arrayClazz.getFieldType();
-         *   arrayClazz.makeInstance();
-         *   ```
-         * </pre>
+         * <p>
+         * <b>Usage:</b>
+         * <p>
+         * {@code ArrayClazz.generate("arrayClassName");}
+         * <p>
+         * {@code arrayClazz.lookLike("arrayClassName");}
+         * <p>
+         * {@code arrayClazz.getFieldType();}
+         * <p>
+         * {@code arrayClazz.makeInstance();}
          */
-        @Getter
         final public static class ArrayClazz {
             private ClassLoader classLoader;
 
@@ -717,9 +850,31 @@ final class RuntimeDataArea {
 
             private Heap.Instance clazzInstance;
 
+            public ClassLoader getClassLoader() {
+                return classLoader;
+            }
+
+            public String getArrayClazzName() {
+                return arrayClazzName;
+            }
+
+            public Clazz getParent() {
+                return parent;
+            }
+
+            public Clazz[] getInterfaces() {
+                return interfaces;
+            }
+
+            public Heap.Instance getClazzInstance() {
+                return clazzInstance;
+            }
+
             /**
-             * Create a instance of class `ArrayClazz`.
-             * @param arrayClazzName  array clazz name
+             * Create a instance of class {@code ArrayClazz}.
+             * 
+             * @param arrayClazzName
+             *        array clazz name
              */
             public static void generate(String arrayClazzName) {
                 if (!_arrayClazzCache.containsKey(arrayClazzName)) {
@@ -750,18 +905,23 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Array method come from the java class `java/lang/Object`.
-             * @param name  method name
-             * @param descriptor  method descriptor
-             * @return  a instance of class `Method`
+             * Array method come from the java class {@code java/lang/Object}.
+             * 
+             * @param name
+             *        method name
+             * @param descriptor
+             *        method descriptor
+             * @return a instance of class {@code Method}
              */
             public Method findMethod(String name, String descriptor) {
                 return _clazzCache.get(CLASS_INFO_NAME).findMethod(name, descriptor);
             }
 
             /**
-             * Assign a instance of java class to instance of class `ArrayClazz`.
-             * @param arrayClazz  a instance of class `ArrayClazz`
+             * Assign a instance of java class to instance of class {@code ArrayClazz}.
+             * 
+             * @param arrayClazz
+             *        a instance of class {@code ArrayClazz}
              */
             public static void classify(ArrayClazz arrayClazz) {
                 if (_clazzCache.containsKey(CLASS_INFO_NAME)) {
@@ -771,7 +931,7 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Assign instance of java class for every loaded instance of class `Clazz`.
+             * Assign instance of java class for every loaded instance of class {@code Clazz}.
              */
             public static void classify() {
                 Clazz classClazz = _clazzCache.get(CLASS_INFO_NAME);
@@ -782,8 +942,9 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Generate a instance of class `ArrayInstance` for this instance of class `ArrayClazz`.
-             * @return  a instance of class `ArrayInstance`
+             * Generate a instance of class {@code ArrayInstance} for this instance of class {@code ArrayClazz}.
+             * 
+             * @return a instance of class {@code ArrayInstance}
              */
             public Heap.ArrayInstance makeInstance(int size) {
                 Heap.ArrayInstance arrayInstance = new Heap.ArrayInstance();
@@ -815,8 +976,10 @@ final class RuntimeDataArea {
 
             /**
              * Verifing this array class is a child class of the given one.
-             * @param arrayClazzName  array class name
-             * @return  is it a child class of the given one
+             * 
+             * @param arrayClazzName
+             *        array class name
+             * @return is it a child class of the given one
              */
             public boolean lookLike(String otherArrayClazzName) {
                 if (arrayClazzName.equals(otherArrayClazzName)) {
@@ -825,7 +988,7 @@ final class RuntimeDataArea {
                 if (parent.getClassName().equals(otherArrayClazzName)) {
                     return true;
                 }
-                for (Clazz interfaceClazz: interfaces) {
+                for (Clazz interfaceClazz : interfaces) {
                     if (interfaceClazz.getClassName().equals(otherArrayClazzName)) {
                         return true;
                     }
@@ -845,11 +1008,9 @@ final class RuntimeDataArea {
             }
         }
 
-
         /**
          * A logic data structure for discribing a java method.
          */
-        @Getter
         final public static class Method {
             private Clazz clazz;
 
@@ -872,10 +1033,44 @@ final class RuntimeDataArea {
 
             private Exception[] exceptionTable;
 
+            public Clazz getClazz() {
+                return clazz;
+            }
+
+            public Classfile.Method getClassfileMethod() {
+                return classfileMethod;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public String getDescriptor() {
+                return descriptor;
+            }
+
+            public int getMaxStack() {
+                return maxStack;
+            }
+
+            public int getMaxLocals() {
+                return maxLocals;
+            }
+
+            public byte[] getCode() {
+                return code;
+            }
+
+            public Exception[] getExceptionTable() {
+                return exceptionTable;
+            }
+
             /**
-             * Create a array of instance of class `Method` and fill them to the given `clazz`.
-             * @param clazz  a instance of class `Clazz`
-             * @return  a array of instance of class `Method`
+             * Create a array of instance of class {@code Method} and fill them to the given {@code clazz}.
+             * 
+             * @param clazz
+             *        a instance of class {@code Clazz}
+             * @return a array of instance of class {@code Method}
              */
             public static Method[] generate(Clazz clazz) {
                 Classfile.Information classfileInformation = clazz.classfileInformation;
@@ -896,14 +1091,14 @@ final class RuntimeDataArea {
                     for (Classfile.Attribute attribute : classfileMethods[i].getAttributes()) {
                         // bytecode
                         if (attribute instanceof Classfile.AttributePredefined.Code) {
-                            Classfile.AttributePredefined.Code codeAttribute = (Classfile.AttributePredefined.Code) attribute;
+                            Classfile.AttributePredefined.Code codeAttribute = (Classfile.AttributePredefined.Code)attribute;
                             method.code = codeAttribute.getCode();
                             method.maxStack = codeAttribute.getMaxStack();
                             method.maxLocals = codeAttribute.getMaxLocals();
                             // exception
                             method.exceptionTable = new Exception[codeAttribute.getExceptionTableLength()];
                             int exceptionIndex = 0;
-                            for (int[] exception: codeAttribute.getExceptionTable()) {
+                            for (int[] exception : codeAttribute.getExceptionTable()) {
                                 method.exceptionTable[exceptionIndex] = new Exception();
                                 method.exceptionTable[exceptionIndex].startPc = exception[0];
                                 method.exceptionTable[exceptionIndex].endPc = exception[1];
@@ -922,20 +1117,24 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Get a instance of class `Exception` by the given information.
-             * @param clazz  a instance of class `Clazz`
-             * @param pc  bytecode pc
-             * @return  a instance of class `Exception`
+             * Get a instance of class {@code Exception} by the given information.
+             * 
+             * @param clazz
+             *        a instance of class {@code Clazz}
+             * @param pc
+             *        bytecode pc
+             * @return a instance of class {@code Exception}
              */
             public Exception findException(Clazz exceptionClazz, int pc) {
                 RuntimeConstantPool runtimeConstantPool = MethodArea.findRuntimeConstantPool(clazz.className);
-                for (Exception exception: exceptionTable) {
+                for (Exception exception : exceptionTable) {
                     Clazz catchTypeClazz = null;
                     if (exception.catchType != 0) {
                         catchTypeClazz = runtimeConstantPool.dereferenceClazz(exception.catchType);
                     }
                     if (pc >= exception.startPc && pc <= exception.endPc) {
-                        if (catchTypeClazz == null || catchTypeClazz == exceptionClazz || catchTypeClazz.isParentOf(exceptionClazz)) {
+                        if (catchTypeClazz == null || catchTypeClazz == exceptionClazz
+                                || catchTypeClazz.isParentOf(exceptionClazz)) {
                             return exception;
                         }
                     }
@@ -945,21 +1144,17 @@ final class RuntimeDataArea {
 
             /**
              * Get the type of arguments by parsing the descriptor.
-             * <pre>
-             * For example:
-             *   descriptor = "([I[[J[Llang/java/Object;IJ)V"
-             *   return ["[I", "[[J", "[Llang/java/Object;", "I", "J"]
-             * </pre>
-             * @return  a type list
+             * <p>
+             * <b>Example:</b>
+             * <p>
+             * {@code descriptor = "([I[[J[Llang/java/Object;IJ)V"}
+             * <p>
+             * {@code return ["[I", "[[J", "[Llang/java/Object;", "I", "J"]}
+             * 
+             * @return a type list
              */
             public String[] getArgumentTypes() {
                 String re = "\\[*L[^;]+;|\\[*[ZBCSIFDJ]";
-                // jdk 8 error
-                // return Pattern.compile(re)
-                //     .matcher(descriptor.substring(1, descriptor.lastIndexOf(")")))
-                //     .results()
-                //     .map(MatchResult::group)
-                //     .toArray(String[]::new);
                 List<String> result = new ArrayList<>();
                 Matcher matcher = Pattern.compile(re).matcher(descriptor.substring(1, descriptor.lastIndexOf(")")));
                 while (matcher.find()) {
@@ -984,7 +1179,6 @@ final class RuntimeDataArea {
         /**
          * A logic data structure for discribing a java field.
          */
-        @Getter
         final public static class Field {
             private Clazz clazz;
 
@@ -995,10 +1189,32 @@ final class RuntimeDataArea {
 
             private Object value;
 
+            public Clazz getClazz() {
+                return clazz;
+            }
+
+            public Classfile.Field getClassfileField() {
+                return classfileField;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public String getDescriptor() {
+                return descriptor;
+            }
+
+            public Object getValue() {
+                return value;
+            }
+
             /**
-             * Create a array of instance of class `Field` and fill them to the given `clazz`.
-             * @param clazz  a instnace of class `Clazz`
-             * @return  a array of instance of class `Field`
+             * Create a array of instance of class {@code Field} and fill them to the given {@code clazz}.
+             * 
+             * @param clazz
+             *        a instnace of class {@code Clazz}
+             * @return a array of instance of class {@code Field}
              */
             public static Field[] generate(Clazz clazz) {
                 Classfile.Information classfileInformation = clazz.classfileInformation;
@@ -1016,8 +1232,10 @@ final class RuntimeDataArea {
             }
 
             /**
-             * Assign the const value to the `final static` field in the instance of class `Clazz`.
-             * @param clazz  a instance of class `Clazz`
+             * Assign the const value to the {@code final static} field in the instance of class {@code Clazz}.
+             * 
+             * @param clazz
+             *        a instance of class {@code Clazz}
              */
             public static void initialize(Clazz clazz) {
                 Classfile.Information classfileInformation = clazz.classfileInformation;
@@ -1025,32 +1243,33 @@ final class RuntimeDataArea {
                 // constant pool
                 Classfile.ConstantPool[] constantPools = classfileInformation.getConstantPool();
 
-                for (Field field: clazz.getFields()) {
+                for (Field field : clazz.getFields()) {
                     Classfile.Field classfileField = field.classfileField;
 
                     if (classfileField.isFinal()) {
                         for (Classfile.Attribute attribute : classfileField.getAttributes()) {
                             if (attribute instanceof Classfile.AttributePredefined.ConstantValue) {
-                                int constantValueIndex = ((Classfile.AttributePredefined.ConstantValue) attribute).getConstantValueIndex();
+                                int constantValueIndex = ((Classfile.AttributePredefined.ConstantValue)attribute)
+                                        .getConstantValueIndex();
                                 switch (field.descriptor) {
                                     case "Z":
                                     case "B":
                                     case "C":
                                     case "S":
                                     case "I":
-                                        field.value = (int) constantPools[constantValueIndex].getValue();
+                                        field.value = (int)constantPools[constantValueIndex].getValue();
                                         break;
                                     case "F":
-                                        field.value = (float) constantPools[constantValueIndex].getValue();
+                                        field.value = (float)constantPools[constantValueIndex].getValue();
                                         break;
                                     case "J":
-                                        field.value = (long) constantPools[constantValueIndex].getValue();
+                                        field.value = (long)constantPools[constantValueIndex].getValue();
                                         break;
                                     case "D":
-                                        field.value = (double) constantPools[constantValueIndex].getValue();
+                                        field.value = (double)constantPools[constantValueIndex].getValue();
                                         break;
                                     case "Ljava/lang/String;":
-                                        int stringIndex = (int) constantPools[constantValueIndex].getValue();
+                                        int stringIndex = (int)constantPools[constantValueIndex].getValue();
                                         field.value = constantPools[stringIndex].getValue();
                                 }
                                 break;
@@ -1066,19 +1285,19 @@ final class RuntimeDataArea {
             }
 
             public int getIntValue() {
-                return value == null ? 0 : (int) value;
+                return value == null ? 0 : (int)value;
             }
 
             public long getLongValue() {
-                return value == null ? 0l : (long) value;
+                return value == null ? 0l : (long)value;
             }
 
             public float getFloatValue() {
-                return value == null ? 0.0f : (float) value;
+                return value == null ? 0.0f : (float)value;
             }
 
             public double getDoubleValue() {
-                return value == null ? 0.0: (double) value;
+                return value == null ? 0.0 : (double)value;
             }
 
             // @todo
@@ -1090,18 +1309,32 @@ final class RuntimeDataArea {
         /**
          * A logic data structure for discribing a java exception.
          */
-        @Getter
         final public static class Exception {
             private int startPc;
             private int endPc;
             private int handlePc;
             private int catchType;
+
+            public int getStartPc() {
+                return startPc;
+            }
+
+            public int getEndPc() {
+                return endPc;
+            }
+
+            public int getHandlePc() {
+                return handlePc;
+            }
+
+            public int getCatchType() {
+                return catchType;
+            }
         }
 
         /**
          * A logic data structure for discribing a java runtime constant pool.
          */
-        @Getter
         final public static class RuntimeConstantPool {
             private Clazz clazz;
 
@@ -1109,10 +1342,24 @@ final class RuntimeDataArea {
 
             private Classfile.ConstantPool[] constantPools;
 
+            public Clazz getClazz() {
+                return clazz;
+            }
+
+            public ClassLoader getClassLoader() {
+                return classLoader;
+            }
+
+            public Classfile.ConstantPool[] getConstantPools() {
+                return constantPools;
+            }
+
             /**
-             * Create a instance of class `RuntimeConstantPool`.
-             * @param clazz  a instance of class `Clazz`
-             * @return  a instance of class `RuntimeConstantPool`
+             * Create a instance of class {@code RuntimeConstantPool}.
+             * 
+             * @param clazz
+             *        a instance of class {@code Clazz}
+             * @return a instance of class {@code RuntimeConstantPool}
              */
             public static RuntimeConstantPool generate(Clazz clazz) {
                 RuntimeConstantPool runtimeConstantPool = new RuntimeConstantPool();
@@ -1133,25 +1380,26 @@ final class RuntimeDataArea {
              * Get a string from constant pool.
              */
             public String dereferenceString(int index) {
-                int classIndex = (int) (constantPools[index].getValue());
+                int classIndex = (int)(constantPools[index].getValue());
                 return constantPools[classIndex].getValue().toString();
             }
 
             /**
-             * Get a instance of class `Clazz` from constant pool.
+             * Get a instance of class {@code Clazz} from constant pool.
              */
             public Clazz dereferenceClazz(int index) {
                 String className = dereferenceString(index);
                 classLoader.load(className);
                 Clazz clazz = MethodArea.findClazz(className);
                 if (!clazz.isAccessibleTo(this.clazz)) {
-                    throw new RuntimeException("Class " + this.clazz.getClassName()+ " can not reference Class " + clazz.getClassName() + ".");
+                    throw new RuntimeException("Class " + this.clazz.getClassName() + " can not reference Class "
+                            + clazz.getClassName() + ".");
                 }
                 return clazz;
             }
 
             /**
-             * Get a instance of class `ArrayClazz` from constant pool.
+             * Get a instance of class {@code ArrayClazz} from constant pool.
              */
             public ArrayClazz dereferenceArrayClazz(int index) {
                 String arrayClassName = dereferenceString(index);
@@ -1164,7 +1412,7 @@ final class RuntimeDataArea {
              * Get a pair value from constant pool.
              */
             public int[] dereferenceReference(int index) {
-                return (int[]) (constantPools[index].getValue());
+                return (int[])(constantPools[index].getValue());
             }
 
             /**
@@ -1172,11 +1420,12 @@ final class RuntimeDataArea {
              */
             public String[] dereferenceNameAndType(int index) {
                 int[] nameIndexAndTypeIndex = dereferenceReference(index);
-                return new String[] { constantPools[nameIndexAndTypeIndex[0]].getValue().toString(), constantPools[nameIndexAndTypeIndex[1]].getValue().toString() };
+                return new String[] { constantPools[nameIndexAndTypeIndex[0]].getValue().toString(),
+                        constantPools[nameIndexAndTypeIndex[1]].getValue().toString() };
             }
 
             /**
-             * Get a instance of class `Field` from constant pool.
+             * Get a instance of class {@code Field} from constant pool.
              */
             public Field dereferenceField(int index) {
                 // field ref: key => classIndex, value => nameAndTypeIndex
@@ -1188,14 +1437,15 @@ final class RuntimeDataArea {
                 // search field
                 Field field = clazz.findField(nameAndType[0], nameAndType[1]);
                 if (!field.isAccessibleTo(this.clazz)) {
-                    throw new RuntimeException("Class " + this.clazz.getClassName() + " can not reference Field " + clazz.getClassName() + "." + field.getName() + ".");
+                    throw new RuntimeException("Class " + this.clazz.getClassName() + " can not reference Field "
+                            + clazz.getClassName() + "." + field.getName() + ".");
                 }
 
                 return field;
             }
 
             /**
-             * Get a instance of class `Method` from constant pool.
+             * Get a instance of class {@code Method} from constant pool.
              */
             public Method dereferenceMethod(int index) {
                 // method ref: key => classIndex, value => nameAndTypeIndex
@@ -1214,14 +1464,15 @@ final class RuntimeDataArea {
                     throw new RuntimeException("Can not find the method " + nameAndType[0] + ".");
                 }
                 if (!method.isAccessibleTo(this.clazz)) {
-                    throw new RuntimeException("Class " + this.clazz.getClassName() + " can not reference method " + clazz.getClassName() + "." + method.getName() + ".");
+                    throw new RuntimeException("Class " + this.clazz.getClassName() + " can not reference method "
+                            + clazz.getClassName() + "." + method.getName() + ".");
                 }
 
                 return method;
             }
 
             /**
-             * Get a instance of class `Method` which is a interface method from constant pool.
+             * Get a instance of class {@code Method} which is a interface method from constant pool.
              */
             public Method dereferenceInterfaceMethod(int index) {
                 // interface method ref: key => interfaceIndex, value => nameAndTypeIndex

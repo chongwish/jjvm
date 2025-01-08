@@ -5,20 +5,13 @@ import me.chongwish.jjvm.RuntimeDataArea.ThreadResource;
 
 public class Starter {
     public static void main(final String[] args) {
-        final Argument argument = Argument.parse(args);
-
-        // If something wrong happend, it will only show you how to use it.
-        if (argument.isHelpRequestExist() || argument.getClazzName() == null) {
-            argument.printUsage();
-            System.exit(0);
-        }
-
-        Classpath.parse(argument.getClasspaths());
+        final CommandLine commandLine = new CommandLine(args);
+        Classpath.parse(commandLine.getClasspaths());
 
         ThreadResource.createThreadResource();
         ClassLoader classLoader = new ClassLoader();
 
-        final String className = argument.getClazzName().replace('.', '/');
+        final String className = commandLine.getClazzName().replace('.', '/');
         classLoader.load(className);
         MethodArea.Clazz clazz = MethodArea.findClazz(className);
 

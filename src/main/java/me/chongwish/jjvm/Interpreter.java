@@ -6,12 +6,10 @@ import me.chongwish.jjvm.RuntimeDataArea.MethodArea.Method;
 
 /**
  * A interpreter to execute the java bytecode.
- * <pre>
- * The Usage:
- *   ```java
- *   Interpreter.init(threadResource).read(method).execute();
- *   ```
- * </pre>
+ * <p>
+ * <b>Usage:</b>
+ * <p>
+ * {@code Interpreter.init(threadResource).read(method).execute()}
  */
 final class Interpreter {
     private Interpreter() {}
@@ -19,9 +17,11 @@ final class Interpreter {
     private ThreadResource threadResource;
 
     /**
-     * Create a instance of class `Interpreter`.
-     * @param threadResource  a instance of class `ThreadResource`
-     * @return  a instance of class `Interpreter`
+     * Create a instance of class {@code Interpreter}.
+     * 
+     * @param threadResource
+     *        a instance of class {@code ThreadResource}
+     * @return a instance of class {@code Interpreter}
      */
     public static Interpreter init(ThreadResource threadResource) {
         Interpreter interpreter = new Interpreter();
@@ -32,9 +32,11 @@ final class Interpreter {
     }
 
     /**
-     * Read a instance of class `Method` and load it to the current frame.
-     * @param method  a instance of class `Method`
-     * @return  a instance of class `Interpreter`
+     * Read a instance of class {@code Method} and load it to the current frame.
+     * 
+     * @param method
+     *        a instance of class {@code Method}
+     * @return a instance of class {@code Interpreter}
      */
     public Interpreter read(Method method) {
         Frame frame = new Frame(method, threadResource);
@@ -45,8 +47,10 @@ final class Interpreter {
 
     /**
      * Fill some argument to current frame.
-     * @param args  arguments array
-     * @return  a instance of class `Interpreter`
+     * 
+     * @param args
+     *        arguments array
+     * @return a instance of class {@code Interpreter}
      */
     public Interpreter with(Object... args) {
         Frame frame = threadResource.getJavaStack().current();

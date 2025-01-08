@@ -16,15 +16,13 @@ import me.chongwish.jjvm.RuntimeDataArea.MethodArea;
 
 /**
  * Implement the instruction of the jvm defined.
- *
- * <pre>
- * The Usage:
- *   ```java
- *   Instruction.Set.get(instruction-code).apply(frame, bytecode);
- *   ```
- * </pre>
- *
+ * <p>
+ * <b>Usage:</b>
+ * <p>
+ * {@code   Instruction.Set.get(instruction-code).apply(frame, bytecode)}
+ * <p>
  * The specifection of instruction:
+ * 
  * @link https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html
  */
 final class Instruction {
@@ -35,7 +33,8 @@ final class Instruction {
 
     static {
         // nop
-        Set.put(0x00, (frame, bytecode) -> {});
+        Set.put(0x00, (frame, bytecode) -> {
+        });
 
         // aconst_null
         Set.put(0x01, Helper.pushValueToStack(null));
@@ -84,13 +83,13 @@ final class Instruction {
 
         // bipush
         Set.put(0x10, (frame, bytecode) -> {
-                frame.getOperandStack().push(bytecode.get());
-            });
+            frame.getOperandStack().push(bytecode.get());
+        });
 
         // sipush
         Set.put(0x11, (frame, bytecode) -> {
-                frame.getOperandStack().push(bytecode.getShort());
-            });
+            frame.getOperandStack().push(bytecode.getShort());
+        });
 
         // ldc
         Set.put(0x12, Helper.LdcOperate(bytecode -> bytecode.getU1()));
@@ -102,67 +101,88 @@ final class Instruction {
         Set.put(0x14, Helper.LdcOperate(bytecode -> bytecode.getChar()));
 
         // iload
-        Set.put(0x15, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(), (index, localVariable) -> localVariable.getInt(index)));
+        Set.put(0x15, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(),
+                (index, localVariable) -> localVariable.getInt(index)));
 
         // lload
-        Set.put(0x16, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(), (index, localVariable) -> localVariable.getLong(index)));
+        Set.put(0x16, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(),
+                (index, localVariable) -> localVariable.getLong(index)));
 
         // fload
-        Set.put(0x17, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(), (index, localVariable) -> localVariable.getFloat(index)));
+        Set.put(0x17, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(),
+                (index, localVariable) -> localVariable.getFloat(index)));
 
         // dload
-        Set.put(0x18, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(), (index, localVariable) -> localVariable.getDouble(index)));
+        Set.put(0x18, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(),
+                (index, localVariable) -> localVariable.getDouble(index)));
 
         // aload
-        Set.put(0x19, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(), (index, localVariable) -> localVariable.get(index)));
+        Set.put(0x19, Helper.pushToStackFromArray(bytecode -> bytecode.getU1(),
+                (index, localVariable) -> localVariable.get(index)));
 
         // iload_0
-        Set.put(0x1a, Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getInt(index)));
+        Set.put(0x1a,
+                Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getInt(index)));
 
         // iload_1
-        Set.put(0x1b, Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getInt(index)));
+        Set.put(0x1b,
+                Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getInt(index)));
 
         // iload_2
-        Set.put(0x1c, Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getInt(index)));
+        Set.put(0x1c,
+                Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getInt(index)));
 
         // iload_3
-        Set.put(0x1d, Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getInt(index)));
+        Set.put(0x1d,
+                Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getInt(index)));
 
         // lload_0
-        Set.put(0x1e, Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getLong(index)));
+        Set.put(0x1e,
+                Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getLong(index)));
 
         // lload_1
-        Set.put(0x1f, Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getLong(index)));
+        Set.put(0x1f,
+                Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getLong(index)));
 
         // lload_2
-        Set.put(0x20, Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getLong(index)));
+        Set.put(0x20,
+                Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getLong(index)));
 
         // lload_3
-        Set.put(0x21, Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getLong(index)));
+        Set.put(0x21,
+                Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getLong(index)));
 
         // fload_0
-        Set.put(0x22, Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getFloat(index)));
+        Set.put(0x22,
+                Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getFloat(index)));
 
         // fload_1
-        Set.put(0x23, Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getFloat(index)));
+        Set.put(0x23,
+                Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getFloat(index)));
 
         // fload_2
-        Set.put(0x24, Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getFloat(index)));
+        Set.put(0x24,
+                Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getFloat(index)));
 
         // fload_3
-        Set.put(0x25, Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getFloat(index)));
+        Set.put(0x25,
+                Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getFloat(index)));
 
         // dload_0
-        Set.put(0x26, Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getDouble(index)));
+        Set.put(0x26,
+                Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.getDouble(index)));
 
         // dload_1
-        Set.put(0x27, Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getDouble(index)));
+        Set.put(0x27,
+                Helper.pushToStackFromArray(bytecode -> 1, (index, localVariable) -> localVariable.getDouble(index)));
 
         // dload_2
-        Set.put(0x28, Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getDouble(index)));
+        Set.put(0x28,
+                Helper.pushToStackFromArray(bytecode -> 2, (index, localVariable) -> localVariable.getDouble(index)));
 
         // dload_3
-        Set.put(0x29, Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getDouble(index)));
+        Set.put(0x29,
+                Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.getDouble(index)));
 
         // aload_0
         Set.put(0x2a, Helper.pushToStackFromArray(bytecode -> 0, (index, localVariable) -> localVariable.get(index)));
@@ -177,28 +197,36 @@ final class Instruction {
         Set.put(0x2d, Helper.pushToStackFromArray(bytecode -> 3, (index, localVariable) -> localVariable.get(index)));
 
         // iaload
-        Set.put(0x2e, Helper.arrayLoad(fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x2e, Helper.arrayLoad(fields -> (int[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // laload
-        Set.put(0x2f, Helper.arrayLoad(fields -> (long[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x2f, Helper.arrayLoad(fields -> (long[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // faload
-        Set.put(0x30, Helper.arrayLoad(fields -> (float[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x30, Helper.arrayLoad(fields -> (float[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // daload
-        Set.put(0x31, Helper.arrayLoad(fields -> (double[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x31, Helper.arrayLoad(fields -> (double[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // aaload
-        Set.put(0x32, Helper.arrayLoad(fields -> (Object[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x32, Helper.arrayLoad(fields -> (Object[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // baload
-        Set.put(0x33, Helper.arrayLoad(fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x33, Helper.arrayLoad(fields -> (int[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // caload
-        Set.put(0x34, Helper.arrayLoad(fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x34, Helper.arrayLoad(fields -> (int[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // saload
-        Set.put(0x35, Helper.arrayLoad(fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, index) -> fields[index]));
+        Set.put(0x35, Helper.arrayLoad(fields -> (int[])fields, (fields, index) -> fields.length > index,
+                (fields, index) -> fields[index]));
 
         // istore
         Set.put(0x36, Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.popInt()));
@@ -207,10 +235,12 @@ final class Instruction {
         Set.put(0x37, Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.popLong()));
 
         // fstore
-        Set.put(0x38, Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.popFloat()));
+        Set.put(0x38,
+                Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.popFloat()));
 
         // dstore
-        Set.put(0x39, Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.popDouble()));
+        Set.put(0x39,
+                Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.popDouble()));
 
         // astore
         Set.put(0x3a, Helper.setToArrayFromStack(bytecode -> bytecode.getU1(), operandStack -> operandStack.pop()));
@@ -276,113 +306,121 @@ final class Instruction {
         Set.put(0x4e, Helper.setToArrayFromStack(bytecode -> 3, operandStack -> operandStack.pop()));
 
         // iastore
-        Set.put(0x4f, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x4f, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // lastore
-        Set.put(0x50, Helper.arrayStore(operandStack -> operandStack.popLong(), fields -> (long[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x50, Helper.arrayStore(operandStack -> operandStack.popLong(), fields -> (long[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // fastore
-        Set.put(0x51, Helper.arrayStore(operandStack -> operandStack.popFloat(), fields -> (float[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x51, Helper.arrayStore(operandStack -> operandStack.popFloat(), fields -> (float[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // dastore
-        Set.put(0x52, Helper.arrayStore(operandStack -> operandStack.popDouble(), fields -> (double[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x52, Helper.arrayStore(operandStack -> operandStack.popDouble(), fields -> (double[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // aastore
-        Set.put(0x53, Helper.arrayStore(operandStack -> operandStack.pop(), fields -> (Object[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x53, Helper.arrayStore(operandStack -> operandStack.pop(), fields -> (Object[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // bastore
-        Set.put(0x54, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x54, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // castore
-        Set.put(0x55, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x55, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // sastore
-        Set.put(0x56, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[]) fields, (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
+        Set.put(0x56, Helper.arrayStore(operandStack -> operandStack.popInt(), fields -> (int[])fields,
+                (fields, index) -> fields.length > index, (fields, map) -> fields[map.getKey()] = map.getValue()));
 
         // pop
         Set.put(0x57, (frame, bytecode) -> {
-                frame.getOperandStack().pop();
-            });
+            frame.getOperandStack().pop();
+        });
 
         // pop2
         Set.put(0x58, (frame, bytecode) -> {
-                frame.getOperandStack().pop();
-                frame.getOperandStack().pop();
-            });
+            frame.getOperandStack().pop();
+            frame.getOperandStack().pop();
+        });
 
         // dup
         Set.put(0x59, (frame, bytecode) -> {
-                frame.getOperandStack().push(frame.getOperandStack().current());
-            });
+            frame.getOperandStack().push(frame.getOperandStack().current());
+        });
 
         // dup_x1
         Set.put(0x5a, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final Object a = operandStack.pop();
-                final Object b = operandStack.pop();
-                operandStack.push(a);
-                operandStack.push(b);
-                operandStack.push(a);
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final Object a = operandStack.pop();
+            final Object b = operandStack.pop();
+            operandStack.push(a);
+            operandStack.push(b);
+            operandStack.push(a);
+        });
 
         // dup_x2
         Set.put(0x5b, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final Object a = operandStack.pop();
-                final Object b = operandStack.pop();
-                final Object c = operandStack.pop();
-                operandStack.push(a);
-                operandStack.push(c);
-                operandStack.push(b);
-                operandStack.push(a);
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final Object a = operandStack.pop();
+            final Object b = operandStack.pop();
+            final Object c = operandStack.pop();
+            operandStack.push(a);
+            operandStack.push(c);
+            operandStack.push(b);
+            operandStack.push(a);
+        });
 
         // dup2
         Set.put(0x5c, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final Object a = operandStack.pop();
-                final Object b = operandStack.current();
-                operandStack.push(a);
-                operandStack.push(b);
-                operandStack.push(a);
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final Object a = operandStack.pop();
+            final Object b = operandStack.current();
+            operandStack.push(a);
+            operandStack.push(b);
+            operandStack.push(a);
+        });
 
         // dup2_x1
         Set.put(0x5d, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final Object a = operandStack.pop();
-                final Object b = operandStack.pop();
-                final Object c = operandStack.pop();
-                operandStack.push(b);
-                operandStack.push(a);
-                operandStack.push(c);
-                operandStack.push(b);
-                operandStack.push(a);
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final Object a = operandStack.pop();
+            final Object b = operandStack.pop();
+            final Object c = operandStack.pop();
+            operandStack.push(b);
+            operandStack.push(a);
+            operandStack.push(c);
+            operandStack.push(b);
+            operandStack.push(a);
+        });
 
         // dup_x2
         Set.put(0x5e, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final Object a = operandStack.pop();
-                final Object b = operandStack.pop();
-                final Object c = operandStack.pop();
-                final Object d = operandStack.pop();
-                operandStack.push(b);
-                operandStack.push(a);
-                operandStack.push(d);
-                operandStack.push(c);
-                operandStack.push(b);
-                operandStack.push(a);
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final Object a = operandStack.pop();
+            final Object b = operandStack.pop();
+            final Object c = operandStack.pop();
+            final Object d = operandStack.pop();
+            operandStack.push(b);
+            operandStack.push(a);
+            operandStack.push(d);
+            operandStack.push(c);
+            operandStack.push(b);
+            operandStack.push(a);
+        });
 
         // swap
         Set.put(0x5f, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final Object a = operandStack.pop();
-                final Object b = operandStack.pop();
-                operandStack.push(a);
-                operandStack.push(b);
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final Object a = operandStack.pop();
+            final Object b = operandStack.pop();
+            operandStack.push(a);
+            operandStack.push(b);
+        });
 
         // iadd
         Set.put(0x60, Helper.arithmeticOperate(operandStack -> operandStack.popInt(), (a, b) -> a + b));
@@ -457,22 +495,28 @@ final class Instruction {
         Set.put(0x77, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> -a));
 
         // ishl
-        Set.put(0x78, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x1f, operandStack -> operandStack.popInt(), (a, b) -> a << b));
+        Set.put(0x78, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x1f,
+                operandStack -> operandStack.popInt(), (a, b) -> a << b));
 
         // lshl
-        Set.put(0x79, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x3f, operandStack -> operandStack.popLong(), (a, b) -> a << b));
+        Set.put(0x79, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x3f,
+                operandStack -> operandStack.popLong(), (a, b) -> a << b));
 
         // ishr
-        Set.put(0x7a, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x1f, operandStack -> operandStack.popInt(), (a, b) -> a >> b));
+        Set.put(0x7a, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x1f,
+                operandStack -> operandStack.popInt(), (a, b) -> a >> b));
 
         // lshr
-        Set.put(0x7b, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x3f, operandStack -> operandStack.popLong(), (a, b) -> a >> b));
+        Set.put(0x7b, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x3f,
+                operandStack -> operandStack.popLong(), (a, b) -> a >> b));
 
         // iushr
-        Set.put(0x7c, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x1f, operandStack -> operandStack.popInt(), (a, b) -> a >>> b));
+        Set.put(0x7c, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x1f,
+                operandStack -> operandStack.popInt(), (a, b) -> a >>> b));
 
         // lushr
-        Set.put(0x7d, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x3f, operandStack -> operandStack.popLong(), (a, b) -> a >>> b));
+        Set.put(0x7d, Helper.arithmeticOperate(operandStack -> operandStack.popInt() & 0x3f,
+                operandStack -> operandStack.popLong(), (a, b) -> a >>> b));
 
         // iand
         Set.put(0x7e, Helper.arithmeticOperate(operandStack -> operandStack.popInt(), (a, b) -> a & b));
@@ -494,64 +538,67 @@ final class Instruction {
 
         // iinc
         Set.put(0x84, (frame, bytecode) -> {
-                final int index = bytecode.getU1();
-                final int value = bytecode.get();
-                final Frame.LocalVariable localVariable = frame.getLocalVariable();
-                localVariable.set(index, localVariable.getInt(index) + value);
-            });
+            final int index = bytecode.getU1();
+            final int value = bytecode.get();
+            final Frame.LocalVariable localVariable = frame.getLocalVariable();
+            localVariable.set(index, localVariable.getInt(index) + value);
+        });
 
         // i2l
-        Set.put(0x85, Helper.unaryOperate(operandStack -> operandStack.popInt(), a -> (long) a.intValue()));
+        Set.put(0x85, Helper.unaryOperate(operandStack -> operandStack.popInt(), a -> (long)a.intValue()));
 
         // i2f
-        Set.put(0x86, Helper.unaryOperate(operandStack -> operandStack.popInt(), a -> (float) a.intValue()));
+        Set.put(0x86, Helper.unaryOperate(operandStack -> operandStack.popInt(), a -> (float)a.intValue()));
 
         // i2d
-        Set.put(0x87, Helper.unaryOperate(operandStack -> operandStack.popInt(), a -> (double) a.intValue()));
+        Set.put(0x87, Helper.unaryOperate(operandStack -> operandStack.popInt(), a -> (double)a.intValue()));
 
         // l2i
-        Set.put(0x88, Helper.unaryOperate(operandStack -> operandStack.popLong(), a -> (int) a.longValue()));
+        Set.put(0x88, Helper.unaryOperate(operandStack -> operandStack.popLong(), a -> (int)a.longValue()));
 
         // l2f
-        Set.put(0x89, Helper.unaryOperate(operandStack -> operandStack.popLong(), a -> (float) a.longValue()));
+        Set.put(0x89, Helper.unaryOperate(operandStack -> operandStack.popLong(), a -> (float)a.longValue()));
 
         // l2d
-        Set.put(0x8a, Helper.unaryOperate(operandStack -> operandStack.popLong(), a -> (double) a.longValue()));
+        Set.put(0x8a, Helper.unaryOperate(operandStack -> operandStack.popLong(), a -> (double)a.longValue()));
 
         // f2i
-        Set.put(0x8b, Helper.unaryOperate(operandStack -> operandStack.popFloat(), a -> (int) a.floatValue()));
+        Set.put(0x8b, Helper.unaryOperate(operandStack -> operandStack.popFloat(), a -> (int)a.floatValue()));
 
         // f2l
-        Set.put(0x8c, Helper.unaryOperate(operandStack -> operandStack.popFloat(), a -> (long) a.floatValue()));
+        Set.put(0x8c, Helper.unaryOperate(operandStack -> operandStack.popFloat(), a -> (long)a.floatValue()));
 
         // f2d
-        Set.put(0x8d, Helper.unaryOperate(operandStack -> operandStack.popFloat(), a -> (double) a.floatValue()));
+        Set.put(0x8d, Helper.unaryOperate(operandStack -> operandStack.popFloat(), a -> (double)a.floatValue()));
 
         // d2i
-        Set.put(0x8e, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> (int) a.doubleValue()));
+        Set.put(0x8e, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> (int)a.doubleValue()));
 
         // d2l
-        Set.put(0x8f, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> (long) a.doubleValue()));
+        Set.put(0x8f, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> (long)a.doubleValue()));
 
         // d2f
-        Set.put(0x90, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> (float) a.doubleValue()));
+        Set.put(0x90, Helper.unaryOperate(operandStack -> operandStack.popDouble(), a -> (float)a.doubleValue()));
 
         // i2b
-        Set.put(0x91, (frame, bytecode) -> {});
+        Set.put(0x91, (frame, bytecode) -> {
+        });
 
         // i2c
-        Set.put(0x92, (frame, bytecode) -> {});
+        Set.put(0x92, (frame, bytecode) -> {
+        });
 
         // i2s
-        Set.put(0x93, (frame, bytecode) -> {});
+        Set.put(0x93, (frame, bytecode) -> {
+        });
 
         // lcmp
         Set.put(0x94, (frame, bytecode) -> {
-                final Frame.OperandStack operandStack = frame.getOperandStack();
-                final long a = operandStack.popLong();
-                final long b = operandStack.popLong();
-                operandStack.push(Long.compare(b, a));
-            });
+            final Frame.OperandStack operandStack = frame.getOperandStack();
+            final long a = operandStack.popLong();
+            final long b = operandStack.popLong();
+            operandStack.push(Long.compare(b, a));
+        });
 
         // fcmpl
         Set.put(0x95, Helper.compareFromStack(-1, operandStack -> operandStack.popFloat(), a -> a.isNaN()));
@@ -609,8 +656,8 @@ final class Instruction {
 
         // goto
         Set.put(0xa7, (frame, bytecode) -> {
-                bytecode.jump();
-            });
+            bytecode.jump();
+        });
 
         // @todo jsr
         Set.put(0xa8, Helper.Unsupport());
@@ -620,42 +667,42 @@ final class Instruction {
 
         // tableswitch
         Set.put(0xaa, (frame, bytecode) -> {
-                int pc = bytecode.getPc();
-                Helper.skipPadding(bytecode);
-                final int index = frame.getOperandStack().popInt();
-                int offset = bytecode.getInt();
-                final int low = bytecode.getInt();
-                final int high = bytecode.getInt();
-                final int n = high - low + 1;
-                final int array[] = new int[n];
-                for (int i = 0; i < n; ++i) {
-                    array[i] = bytecode.getInt();
-                }
-                if (index >= low && index <= high) {
-                    offset = array[index - low];
-                }
-                bytecode.setPc(pc + offset - 1);
-            });
+            int pc = bytecode.getPc();
+            Helper.skipPadding(bytecode);
+            final int index = frame.getOperandStack().popInt();
+            int offset = bytecode.getInt();
+            final int low = bytecode.getInt();
+            final int high = bytecode.getInt();
+            final int n = high - low + 1;
+            final int array[] = new int[n];
+            for (int i = 0; i < n; ++i) {
+                array[i] = bytecode.getInt();
+            }
+            if (index >= low && index <= high) {
+                offset = array[index - low];
+            }
+            bytecode.setPc(pc + offset - 1);
+        });
 
         // lookupswitch
         Set.put(0xab, (frame, bytecode) -> {
-                int pc = bytecode.getPc();
-                Helper.skipPadding(bytecode);
-                final int key = frame.getOperandStack().popInt();
-                int offset = bytecode.getInt();
-                final int n = bytecode.getInt();
-                final int map[] = new int[2 * n];
-                for (int i = 0; i < 2 * n; ++i) {
-                    map[i] = bytecode.getInt();
+            int pc = bytecode.getPc();
+            Helper.skipPadding(bytecode);
+            final int key = frame.getOperandStack().popInt();
+            int offset = bytecode.getInt();
+            final int n = bytecode.getInt();
+            final int map[] = new int[2 * n];
+            for (int i = 0; i < 2 * n; ++i) {
+                map[i] = bytecode.getInt();
+            }
+            for (int i = 0; i < 2 * n; i += 2) {
+                if (map[i] == key) {
+                    offset = map[i + 1];
+                    break;
                 }
-                for (int i = 0; i < 2 * n; i += 2) {
-                    if (map[i] == key) {
-                        offset = map[i + 1];
-                        break;
-                    }
-                }
-                bytecode.setPc(pc + offset - 1);
-            });
+            }
+            bytecode.setPc(pc + offset - 1);
+        });
 
         // ireturn
         Set.put(0xac, Helper.returnOperate(operandStack -> operandStack.popInt()));
@@ -674,18 +721,18 @@ final class Instruction {
 
         // return
         Set.put(0xb1, (frame, bytecode) -> {
-                frame.getThreadResource().getJavaStack().pop();
-            });
+            frame.getThreadResource().getJavaStack().pop();
+        });
 
         // getstatic
         Set.put(0xb2, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Field field = runtimeConstantPool.dereferenceField(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Field field = runtimeConstantPool.dereferenceField(index);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                switch (field.getDescriptor().charAt(0)) {
+            switch (field.getDescriptor().charAt(0)) {
                 case 'Z':
                 case 'B':
                 case 'C':
@@ -706,22 +753,22 @@ final class Instruction {
                 case '[':
                     operandStack.push(field.getValue());
                     break;
-                }
-            });
+            }
+        });
 
         // putstatic
         Set.put(0xb3, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Field field = runtimeConstantPool.dereferenceField(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Field field = runtimeConstantPool.dereferenceField(index);
 
-                if (field.getClassfileField().isFinal()) {
-                    // @todo
-                }
+            if (field.getClassfileField().isFinal()) {
+                // @todo
+            }
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                switch (field.getDescriptor().charAt(0)) {
+            switch (field.getDescriptor().charAt(0)) {
                 case 'Z':
                 case 'B':
                 case 'C':
@@ -742,66 +789,67 @@ final class Instruction {
                 case '[':
                     field.setValue(operandStack.pop());
                     break;
-                }
-            });
+            }
+        });
 
         // getfield
         Set.put(0xb4, (frame, bytecode) -> {
-                // ref
-                final int refIndex = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                int[] ref = runtimeConstantPool.dereferenceReference(refIndex);
+            // ref
+            final int refIndex = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            int[] ref = runtimeConstantPool.dereferenceReference(refIndex);
 
-                // name and type
-                String[] nameAndType = runtimeConstantPool.dereferenceNameAndType(ref[1]);
+            // name and type
+            String[] nameAndType = runtimeConstantPool.dereferenceNameAndType(ref[1]);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                Heap.Instance instance = (Heap.Instance) operandStack.pop();
+            Heap.Instance instance = (Heap.Instance)operandStack.pop();
 
-                if (instance == null) {
-                    throw new RuntimeException("Can not get field[" + nameAndType[0] + "," + nameAndType[1] + "] from a null instance.");
-                }
-                MethodArea.Field field = instance.findField(nameAndType[0], nameAndType[1]);
+            if (instance == null) {
+                throw new RuntimeException(
+                        "Can not get field[" + nameAndType[0] + "," + nameAndType[1] + "] from a null instance.");
+            }
+            MethodArea.Field field = instance.findField(nameAndType[0], nameAndType[1]);
 
-                switch (nameAndType[1].charAt(0)) {
-                    case 'Z':
-                    case 'B':
-                    case 'C':
-                    case 'S':
-                    case 'I':
-                        operandStack.push(field.getIntValue());
-                        break;
-                    case 'F':
-                        operandStack.push(field.getFloatValue());
-                        break;
-                    case 'J':
-                        operandStack.push(field.getLongValue());
-                        break;
-                    case 'D':
-                        operandStack.push(field.getDoubleValue());
-                        break;
-                    case 'L':
-                    case '[':
-                        operandStack.push(field.getValue());
-                        break;
-                }
-            });
+            switch (nameAndType[1].charAt(0)) {
+                case 'Z':
+                case 'B':
+                case 'C':
+                case 'S':
+                case 'I':
+                    operandStack.push(field.getIntValue());
+                    break;
+                case 'F':
+                    operandStack.push(field.getFloatValue());
+                    break;
+                case 'J':
+                    operandStack.push(field.getLongValue());
+                    break;
+                case 'D':
+                    operandStack.push(field.getDoubleValue());
+                    break;
+                case 'L':
+                case '[':
+                    operandStack.push(field.getValue());
+                    break;
+            }
+        });
 
         // putfield
         Set.put(0xb5, (frame, bytecode) -> {
-                // ref
-                final int refIndex = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                int[] ref = runtimeConstantPool.dereferenceReference(refIndex);
+            // ref
+            final int refIndex = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            int[] ref = runtimeConstantPool.dereferenceReference(refIndex);
 
-                // name and type
-                String[] nameAndType = runtimeConstantPool.dereferenceNameAndType(ref[1]);
+            // name and type
+            String[] nameAndType = runtimeConstantPool.dereferenceNameAndType(ref[1]);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                Object value = null;
-                switch (nameAndType[1].charAt(0)) {
+            Object value = null;
+            switch (nameAndType[1].charAt(0)) {
                 case 'Z':
                 case 'B':
                 case 'C':
@@ -822,267 +870,279 @@ final class Instruction {
                 case '[':
                     value = operandStack.pop();
                     break;
-                }
+            }
 
-                Heap.Instance instance = (Heap.Instance) operandStack.pop();
-                if (instance == null) {
-                    throw new RuntimeException("Can not get field[" + nameAndType[0] + "," + nameAndType[1] + "] from a null instance.");
-                }
-                MethodArea.Field field = instance.findField(nameAndType[0], nameAndType[1]);
+            Heap.Instance instance = (Heap.Instance)operandStack.pop();
+            if (instance == null) {
+                throw new RuntimeException(
+                        "Can not get field[" + nameAndType[0] + "," + nameAndType[1] + "] from a null instance.");
+            }
+            MethodArea.Field field = instance.findField(nameAndType[0], nameAndType[1]);
 
-                if (field.getClassfileField().isFinal()) {
-                    // @todo
-                }
+            if (field.getClassfileField().isFinal()) {
+                // @todo
+            }
 
-                field.setValue(value);
-            });
+            field.setValue(value);
+        });
 
         // invokevirtual
         Set.put(0xb6, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Method method = runtimeConstantPool.dereferenceMethod(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Method method = runtimeConstantPool.dereferenceMethod(index);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                if (method.getClassfileMethod().isStatic()) {
-                    throw new RuntimeException("Instruction invokevirtual can not invoke a static method.");
+            if (method.getClassfileMethod().isStatic()) {
+                throw new RuntimeException("Instruction invokevirtual can not invoke a static method.");
+            }
+
+            String[] argumentTypes = method.getArgumentTypes();
+            int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes,
+                    method.getClassfileMethod().isStatic()) - 1;
+
+            Object object = operandStack.bottom(localVariableIndex);
+            if (object == null) {
+                // @todo hook for System.out.println & System.out.print
+                if (Helper.printHook(method, argumentTypes, operandStack)) {
+                    return;
                 }
+                throw new RuntimeException("Method " + method.getName() + " can not be called by a null instance.");
+            } else if (object instanceof Heap.Instance) {
+                Heap.Instance instance = (Heap.Instance)object;
+                method = instance.getClazz().findMethod(method.getName(), method.getDescriptor());
+            } else if (object instanceof Heap.ArrayInstance) {
+                // just like: new String[0].getClass()
+                method = ((Heap.ArrayInstance)object).getArrayClazz().findMethod(method.getName(),
+                        method.getDescriptor());
+            } else {
+                throw new RuntimeException("Call a method from a unknown instance.");
+            }
 
-                String[] argumentTypes = method.getArgumentTypes();
-                int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes, method.getClassfileMethod().isStatic()) - 1;
+            if (method.getClassfileMethod().isAbstract()) {
+                throw new RuntimeException("Instruction invokevirtual call a abstract method.");
+            }
 
-                Object object = operandStack.bottom(localVariableIndex);
-                if (object == null) {
-                    // @todo hook for System.out.println & System.out.print
-                    if (Helper.printHook(method, argumentTypes, operandStack)) {
-                        return;
-                    }
-                    throw new RuntimeException("Method " + method.getName() + " can not be called by a null instance.");
-                } else if (object instanceof Heap.Instance) {
-                    Heap.Instance instance = (Heap.Instance) object;
-                    method = instance.getClazz().findMethod(method.getName(), method.getDescriptor());
-                } else if (object instanceof Heap.ArrayInstance) {
-                    // just like: new String[0].getClass()
-                    method = ((Heap.ArrayInstance) object).getArrayClazz().findMethod(method.getName(), method.getDescriptor());
-                } else {
-                    throw new RuntimeException("Call a method from a unknown instance.");
-                }
-
-                if (method.getClassfileMethod().isAbstract()) {
-                    throw new RuntimeException("Instruction invokevirtual call a abstract method.");
-                }
-
-                Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
-            });
+            Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
+        });
 
         // invokespecial
         Set.put(0xb7, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Method method = runtimeConstantPool.dereferenceMethod(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Method method = runtimeConstantPool.dereferenceMethod(index);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                if (method.getClassfileMethod().isStatic()) {
-                    throw new RuntimeException("Instruction invokespecial can not invoke a static method.");
-                }
+            if (method.getClassfileMethod().isStatic()) {
+                throw new RuntimeException("Instruction invokespecial can not invoke a static method.");
+            }
 
-                String[] argumentTypes = method.getArgumentTypes();
-                int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes, method.getClassfileMethod().isStatic()) - 1;
+            String[] argumentTypes = method.getArgumentTypes();
+            int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes,
+                    method.getClassfileMethod().isStatic()) - 1;
 
-                Heap.Instance instance = (Heap.Instance) operandStack.bottom(localVariableIndex);
-                if (instance == null) {
-                    throw new RuntimeException("Method " + method.getName() + " can not be called by a null instance.");
-                }
+            Heap.Instance instance = (Heap.Instance)operandStack.bottom(localVariableIndex);
+            if (instance == null) {
+                throw new RuntimeException("Method " + method.getName() + " can not be called by a null instance.");
+            }
 
-                MethodArea.Clazz currentClazz = runtimeConstantPool.getClazz();
-                if (!method.getName().equals("<init>") && currentClazz.getClassfileInformation().isSuper() && method.getClazz().isParentOf(currentClazz)) {
-                    method = ((MethodArea.Clazz) currentClazz.getParent()).findMethod(method.getName(), method.getDescriptor());
-                }
+            MethodArea.Clazz currentClazz = runtimeConstantPool.getClazz();
+            if (!method.getName().equals("<init>") && currentClazz.getClassfileInformation().isSuper()
+                    && method.getClazz().isParentOf(currentClazz)) {
+                method = ((MethodArea.Clazz)currentClazz.getParent()).findMethod(method.getName(),
+                        method.getDescriptor());
+            }
 
-                if (method.getClassfileMethod().isAbstract()) {
-                    throw new RuntimeException("Instruction invokespecial call a abstract method.");
-                }
+            if (method.getClassfileMethod().isAbstract()) {
+                throw new RuntimeException("Instruction invokespecial call a abstract method.");
+            }
 
-                Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
-            });
+            Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
+        });
 
         // invokestatic
         Set.put(0xb8, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Method method = runtimeConstantPool.dereferenceMethod(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Method method = runtimeConstantPool.dereferenceMethod(index);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                String[] argumentTypes = method.getArgumentTypes();
-                int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes, method.getClassfileMethod().isStatic()) - 1;
+            String[] argumentTypes = method.getArgumentTypes();
+            int localVariableIndex = Helper.countArgumentTypesSpace(argumentTypes,
+                    method.getClassfileMethod().isStatic()) - 1;
 
-                Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
-            });
+            Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
+        });
 
         // invokeinterface
         Set.put(0xb9, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Method interfaceMethod = runtimeConstantPool.dereferenceInterfaceMethod(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Method interfaceMethod = runtimeConstantPool.dereferenceInterfaceMethod(index);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                if (interfaceMethod.getClassfileMethod().isStatic()) {
-                    throw new RuntimeException("Instruction invokevinterface can not invoke a static method.");
-                }
+            if (interfaceMethod.getClassfileMethod().isStatic()) {
+                throw new RuntimeException("Instruction invokevinterface can not invoke a static method.");
+            }
 
-                String[] argumentTypes = interfaceMethod.getArgumentTypes();
-                int localVariableIndex = bytecode.getU1() - 1;
-                bytecode.getU1();
+            String[] argumentTypes = interfaceMethod.getArgumentTypes();
+            int localVariableIndex = bytecode.getU1() - 1;
+            bytecode.getU1();
 
-                Heap.Instance instance = (Heap.Instance) operandStack.bottom(localVariableIndex);
-                if (instance == null) {
-                    throw new RuntimeException("Method " + interfaceMethod.getName() + " can not be called by a null instance.");
-                }
+            Heap.Instance instance = (Heap.Instance)operandStack.bottom(localVariableIndex);
+            if (instance == null) {
+                throw new RuntimeException(
+                        "Method " + interfaceMethod.getName() + " can not be called by a null instance.");
+            }
 
-                if (!instance.getClazz().isImplementOf(interfaceMethod.getClazz())) {
-                    throw new RuntimeException("Class " + instance.getClazz().getClassName() + " is not a implementation of interface " + interfaceMethod.getClazz().getClassName() + ".");
-                }
+            if (!instance.getClazz().isImplementOf(interfaceMethod.getClazz())) {
+                throw new RuntimeException("Class " + instance.getClazz().getClassName()
+                        + " is not a implementation of interface " + interfaceMethod.getClazz().getClassName() + ".");
+            }
 
-                MethodArea.Method method = instance.getClazz().findMethod(interfaceMethod.getName(), interfaceMethod.getDescriptor());
+            MethodArea.Method method = instance.getClazz().findMethod(interfaceMethod.getName(),
+                    interfaceMethod.getDescriptor());
 
-                if (method.getClassfileMethod().isAbstract()) {
-                    throw new RuntimeException("Instruction invokeinterface call a abstract method.");
-                }
+            if (method.getClassfileMethod().isAbstract()) {
+                throw new RuntimeException("Instruction invokeinterface call a abstract method.");
+            }
 
-                Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
-            });
+            Helper.createNewFrame(method, frame, operandStack, argumentTypes, localVariableIndex);
+        });
 
         // @todo invokedynamic
         Set.put(0xba, Helper.Unsupport());
 
         // new
         Set.put(0xbb, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                MethodArea.Clazz clazz = runtimeConstantPool.dereferenceClazz(index);
+            final int index = bytecode.getChar();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            MethodArea.Clazz clazz = runtimeConstantPool.dereferenceClazz(index);
 
-                frame.getOperandStack().push(clazz.makeInstance());
-            });
+            frame.getOperandStack().push(clazz.makeInstance());
+        });
 
         // newarray
         Set.put(0xbc, (frame, bytecode) -> {
-                final int type = bytecode.getU1();
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            final int type = bytecode.getU1();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                int size = operandStack.popInt();
-                if (size < 0) {
-                    throw new RuntimeException("Array size can not be a negative number.");
-                }
+            int size = operandStack.popInt();
+            if (size < 0) {
+                throw new RuntimeException("Array size can not be a negative number.");
+            }
 
-                MethodArea.ArrayClazz arrayClazz = MethodArea.findArrayClazz(Helper.convertArrayTypeToArrayClazzName(type));
-                operandStack.push(arrayClazz.makeInstance(size));
-            });
+            MethodArea.ArrayClazz arrayClazz = MethodArea.findArrayClazz(Helper.convertArrayTypeToArrayClazzName(type));
+            operandStack.push(arrayClazz.makeInstance(size));
+        });
 
         // anewarray
         Set.put(0xbd, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                MethodArea.Clazz clazz = frame.getRuntimeConstantPool().dereferenceClazz(index);
+            final int index = bytecode.getChar();
+            MethodArea.Clazz clazz = frame.getRuntimeConstantPool().dereferenceClazz(index);
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                int size = operandStack.popInt();
-                if (size < 0) {
-                    throw new RuntimeException("Array size can not be a negative number.");
-                }
+            int size = operandStack.popInt();
+            if (size < 0) {
+                throw new RuntimeException("Array size can not be a negative number.");
+            }
 
-                MethodArea.ArrayClazz arrayClazz = MethodArea.findArrayClazz(Helper.convertClassNameToArrayClazzName(clazz.getClassName()));
-                operandStack.push(arrayClazz.makeInstance(size));
-            });
+            MethodArea.ArrayClazz arrayClazz = MethodArea
+                    .findArrayClazz(Helper.convertClassNameToArrayClazzName(clazz.getClassName()));
+            operandStack.push(arrayClazz.makeInstance(size));
+        });
 
         // arraylength
         Set.put(0xbe, (frame, bytecode) -> {
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                Heap.ArrayInstance arrayInstance = (Heap.ArrayInstance) operandStack.pop();
+            Heap.ArrayInstance arrayInstance = (Heap.ArrayInstance)operandStack.pop();
 
-                operandStack.push(arrayInstance.getSize());
-            });
+            operandStack.push(arrayInstance.getSize());
+        });
 
         // athrow
         Set.put(0xbf, (frame, bytecode) -> {
-                Heap.Instance instance = (Heap.Instance) frame.getOperandStack().pop();
-                if (instance == null) {
-                    throw new RuntimeException("Can not throw a null exception!");
-                }
+            Heap.Instance instance = (Heap.Instance)frame.getOperandStack().pop();
+            if (instance == null) {
+                throw new RuntimeException("Can not throw a null exception!");
+            }
 
-                RuntimeDataArea.JavaStack javaStack = frame.getThreadResource().getJavaStack();
+            RuntimeDataArea.JavaStack javaStack = frame.getThreadResource().getJavaStack();
 
-                do {
-                    Frame currentFrame = javaStack.current();
-                    Frame.OperandStack operandStack = currentFrame.getOperandStack();
+            do {
+                Frame currentFrame = javaStack.current();
+                Frame.OperandStack operandStack = currentFrame.getOperandStack();
 
-                    int pc = currentFrame.getBytecode().getPc();
-                    MethodArea.Exception exception = currentFrame.getMethod().findException(instance.getClazz(), pc);
+                int pc = currentFrame.getBytecode().getPc();
+                MethodArea.Exception exception = currentFrame.getMethod().findException(instance.getClazz(), pc);
 
-                    if (exception != null && exception.getHandlePc() > 0) {
-                        operandStack.clear();
-                        operandStack.push(instance);
-                        currentFrame.getBytecode().setPc(exception.getHandlePc());
-                        return;
-                    }
-
-                    javaStack.pop();
-                } while (!javaStack.isEmpty());
-
-                // UncaughtException
-                MethodArea.Field messageField = instance.findField("detailMessage", "Ljava/lang/String;");
-                String message = String.format("Call %s.%s\n occur\t %s:%s", frame.getMethod().getClazz().getClassName(), frame.getMethod().getName(), instance.getClazz().getClassName(), messageField.getValue());
-                throw new RuntimeException(message);
-            });
-
-        // checkcast
-        Set.put(0xc0, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                Frame.OperandStack operandStack = frame.getOperandStack();
-
-                Object instance = operandStack.pop();
-                operandStack.push(instance);
-
-                if (instance == null) {
+                if (exception != null && exception.getHandlePc() > 0) {
+                    operandStack.clear();
+                    operandStack.push(instance);
+                    currentFrame.getBytecode().setPc(exception.getHandlePc());
                     return;
                 }
 
-                if (instance instanceof Heap.Instance) {
-                    MethodArea.Clazz clazz = frame.getRuntimeConstantPool().dereferenceClazz(index);
+                javaStack.pop();
+            } while (!javaStack.isEmpty());
 
-                    if (!((Heap.Instance) instance).isInstanceOf(clazz)) {
-                        throw new RuntimeException("Can not cast to instance of " + clazz.getClassName() + ".");
-                    }
-                } else {
-                    String name = frame.getRuntimeConstantPool().dereferenceString(index);
-                    if (!((Heap.ArrayInstance) instance).isInstanceOf(name)) {
-                        throw new RuntimeException("Can not cast to instance of " + name + ".");
-                    }
+            // UncaughtException
+            MethodArea.Field messageField = instance.findField("detailMessage", "Ljava/lang/String;");
+            String message = String.format("Call %s.%s\n occur\t %s:%s", frame.getMethod().getClazz().getClassName(),
+                    frame.getMethod().getName(), instance.getClazz().getClassName(), messageField.getValue());
+            throw new RuntimeException(message);
+        });
+
+        // checkcast
+        Set.put(0xc0, (frame, bytecode) -> {
+            final int index = bytecode.getChar();
+            Frame.OperandStack operandStack = frame.getOperandStack();
+
+            Object instance = operandStack.pop();
+            operandStack.push(instance);
+
+            if (instance == null) {
+                return;
+            }
+
+            if (instance instanceof Heap.Instance) {
+                MethodArea.Clazz clazz = frame.getRuntimeConstantPool().dereferenceClazz(index);
+
+                if (!((Heap.Instance)instance).isInstanceOf(clazz)) {
+                    throw new RuntimeException("Can not cast to instance of " + clazz.getClassName() + ".");
                 }
+            } else {
+                String name = frame.getRuntimeConstantPool().dereferenceString(index);
+                if (!((Heap.ArrayInstance)instance).isInstanceOf(name)) {
+                    throw new RuntimeException("Can not cast to instance of " + name + ".");
+                }
+            }
 
-            });
+        });
 
         // instanceof
         Set.put(0xc1, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            final int index = bytecode.getChar();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                Object instance = operandStack.pop();
+            Object instance = operandStack.pop();
 
-                if (instance == null) {
-                    operandStack.push(1);
-                } else if (instance instanceof Heap.Instance) {
-                    MethodArea.Clazz clazz = frame.getRuntimeConstantPool().dereferenceClazz(index);
-                    operandStack.push(((Heap.Instance) instance).isInstanceOf(clazz) ? 1 : 0);
-                } else {
-                    String name = frame.getRuntimeConstantPool().dereferenceString(index);
-                    operandStack.push(((Heap.ArrayInstance) instance).isInstanceOf(name) ? 1 : 0);
-                }
-            });
+            if (instance == null) {
+                operandStack.push(1);
+            } else if (instance instanceof Heap.Instance) {
+                MethodArea.Clazz clazz = frame.getRuntimeConstantPool().dereferenceClazz(index);
+                operandStack.push(((Heap.Instance)instance).isInstanceOf(clazz) ? 1 : 0);
+            } else {
+                String name = frame.getRuntimeConstantPool().dereferenceString(index);
+                operandStack.push(((Heap.ArrayInstance)instance).isInstanceOf(name) ? 1 : 0);
+            }
+        });
 
         // @todo monitorenter
         Set.put(0xc2, Helper.Unsupport());
@@ -1092,21 +1152,23 @@ final class Instruction {
 
         // wide
         Set.put(0xc4, (frame, bytecode) -> {
-                final int opcode = bytecode.getU1();
-                switch (opcode) {
+            final int opcode = bytecode.getU1();
+            switch (opcode) {
                 case 0x15:
                 case 0x16:
                 case 0x17:
                 case 0x18:
                 case 0x19:
-                    Helper.pushToStackFromArray(bytecode1 -> bytecode1.getChar(), Helper.MapFunctionOfLoad.get(opcode)).accept(frame, bytecode);
+                    Helper.pushToStackFromArray(bytecode1 -> bytecode1.getChar(), Helper.MapFunctionOfLoad.get(opcode))
+                            .accept(frame, bytecode);
                     break;
                 case 0x36:
                 case 0x37:
                 case 0x38:
                 case 0x39:
                 case 0x3a:
-                    Helper.setToArrayFromStack(bytecode1 -> bytecode1.getChar(), Helper.MapFunctionOfStore.get(opcode)).accept(frame, bytecode);
+                    Helper.setToArrayFromStack(bytecode1 -> bytecode1.getChar(), Helper.MapFunctionOfStore.get(opcode))
+                            .accept(frame, bytecode);
                     break;
                 case 0x84:
                     final int index = bytecode.getChar();
@@ -1117,33 +1179,33 @@ final class Instruction {
                 case 0xa9:
                     Helper.Unsupport().accept(frame, bytecode);
                     break;
-                }
-            });
+            }
+        });
 
         // multianewarray
         Set.put(0xc5, (frame, bytecode) -> {
-                final int index = bytecode.getChar();
-                final int dimension = bytecode.getU1();
-                MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
-                final int arrayClazzNameIndex = (int) runtimeConstantPool.dereference(index).getValue();
-                final String arrayClazzName = (String) runtimeConstantPool.dereference(arrayClazzNameIndex).getValue();
+            final int index = bytecode.getChar();
+            final int dimension = bytecode.getU1();
+            MethodArea.RuntimeConstantPool runtimeConstantPool = frame.getRuntimeConstantPool();
+            final int arrayClazzNameIndex = (int)runtimeConstantPool.dereference(index).getValue();
+            final String arrayClazzName = (String)runtimeConstantPool.dereference(arrayClazzNameIndex).getValue();
 
-                Frame.OperandStack operandStack = frame.getOperandStack();
+            Frame.OperandStack operandStack = frame.getOperandStack();
 
-                int[] dimensionSize = new int[dimension];
-                for (int i = dimension - 1; i >= 0; --i) {
-                    dimensionSize[i] = operandStack.popInt();
-                    if (dimensionSize[i] < 0) {
-                        throw new RuntimeException("Array size can not be a negative number.");
-                    }
+            int[] dimensionSize = new int[dimension];
+            for (int i = dimension - 1; i >= 0; --i) {
+                dimensionSize[i] = operandStack.popInt();
+                if (dimensionSize[i] < 0) {
+                    throw new RuntimeException("Array size can not be a negative number.");
                 }
-                MethodArea.ArrayClazz arrayClazz = MethodArea.findArrayClazz(arrayClazzName);
-                Heap.ArrayInstance arrayInstance = arrayClazz.makeInstance(dimensionSize[0]);
+            }
+            MethodArea.ArrayClazz arrayClazz = MethodArea.findArrayClazz(arrayClazzName);
+            Heap.ArrayInstance arrayInstance = arrayClazz.makeInstance(dimensionSize[0]);
 
-                Helper.createMultiArray(arrayClazz, arrayInstance, dimensionSize, 1);
+            Helper.createMultiArray(arrayClazz, arrayInstance, dimensionSize, 1);
 
-                operandStack.push(arrayInstance);
-            });
+            operandStack.push(arrayInstance);
+        });
 
         // ifnull
         Set.put(0xc6, Helper.jumpBranchByComparation(operandStack -> operandStack.pop(), a -> a == null));
@@ -1153,8 +1215,8 @@ final class Instruction {
 
         // goto_w
         Set.put(0xc8, (frame, bytecode) -> {
-                bytecode.jump(bytecode::peekInt);
-            });
+            bytecode.jump(bytecode::peekInt);
+        });
 
         // @todo jsr_w
         Set.put(0xc9, Helper.Unsupport());
@@ -1170,7 +1232,8 @@ final class Instruction {
     }
 
     /**
-     * Class Instruction.Helper include a lot of static method which can generate a lambda function which a instruction need, so that implementing a instruction is a very esay way.
+     * Class Instruction.Helper include a lot of static method which can generate a lambda function which a instruction
+     * need, so that implementing a instruction is a very esay way.
      */
     final private static class Helper {
         /**
@@ -1185,10 +1248,8 @@ final class Instruction {
 
         /**
          * Generate a lambda function that push a value to the OperandStack. The value type is generic.
-         * <pre>
-         * These instructions below use it:
-         *   aconst_null [i|l|f|d]const_xx
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code aconst_null [i|l|f|d]const_xx}
          */
         private static <T> BiConsumer<Frame, Bytecode> pushValueToStack(final T value) {
             return (frame, bytecode) -> {
@@ -1198,12 +1259,11 @@ final class Instruction {
 
         /**
          * Generate a lambda function that get a generic value from the LocalVariable and push it to the OperandStack.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d|a]load [i|l|f|d|a]load_xx
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d|a]load [i|l|f|d|a]load_xx}
          */
-        private static <T> BiConsumer<Frame, Bytecode> pushToStackFromArray(final Function<Bytecode, Integer> f1, final BiFunction<Integer, Frame.LocalVariable, T> f2) {
+        private static <T> BiConsumer<Frame, Bytecode> pushToStackFromArray(final Function<Bytecode, Integer> f1,
+                final BiFunction<Integer, Frame.LocalVariable, T> f2) {
             return (frame, bytecode) -> {
                 final int index = f1.apply(bytecode);
                 frame.getOperandStack().push(f2.apply(index, frame.getLocalVariable()));
@@ -1212,12 +1272,11 @@ final class Instruction {
 
         /**
          * Generate a lambda function that pop a generic value from the OperandStack and set it to the LocalVariable.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d|a]store [i|l|f|d|a]store_xx
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d|a]store [i|l|f|d|a]store_xx}
          */
-        private static <T> BiConsumer<Frame, Bytecode> setToArrayFromStack(final Function<Bytecode, Integer> f1, final Function<Frame.OperandStack, T> f2) {
+        private static <T> BiConsumer<Frame, Bytecode> setToArrayFromStack(final Function<Bytecode, Integer> f1,
+                final Function<Frame.OperandStack, T> f2) {
             return (frame, bytecode) -> {
                 final int index = f1.apply(bytecode);
                 frame.getLocalVariable().set(index, f2.apply(frame.getOperandStack()));
@@ -1225,13 +1284,13 @@ final class Instruction {
         }
 
         /**
-         * Generate a lambda function that compare two values from the OperandStack and push the result to the OperandStack.
-         * <pre>
-         * These instructions below use it:
-         *   fcmpl fcmpg dcmpl dcmpg
-         * </pre>
+         * Generate a lambda function that compare two values from the OperandStack and push the result to the
+         * OperandStack.
+         * <p>
+         * These instructions below use it: {@code fcmpl fcmpg dcmpl dcmpg}
          */
-        private static <T extends Number & Comparable<? super T>> BiConsumer<Frame, Bytecode> compareFromStack(final int defaultResult, Function<Frame.OperandStack, T> f, Predicate<T> p) {
+        private static <T extends Number & Comparable<? super T>> BiConsumer<Frame, Bytecode> compareFromStack(
+                final int defaultResult, Function<Frame.OperandStack, T> f, Predicate<T> p) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 int result;
@@ -1248,12 +1307,11 @@ final class Instruction {
 
         /**
          * Generate a lambda function that jump a offset by comparing two value from the OperandStack.
-         * <pre>
-         * These instructions below use it:
-         *   if_icmpxx
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code if_icmpxx}
          */
-        private static <T> BiConsumer<Frame, Bytecode> jumpBranchByComparation(Function<Frame.OperandStack, T> f, BiPredicate<T, T> p) {
+        private static <T> BiConsumer<Frame, Bytecode> jumpBranchByComparation(Function<Frame.OperandStack, T> f,
+                BiPredicate<T, T> p) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 T a = f.apply(operandStack);
@@ -1267,12 +1325,11 @@ final class Instruction {
 
         /**
          * Generate a lambda function that jump a offset by comparing the value from OperandStack and the given value.
-         * <pre>
-         * These instructions below use it:
-         *   ifxx
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code ifxx}
          */
-        private static <T> BiConsumer<Frame, Bytecode> jumpBranchByComparation(Function<Frame.OperandStack, T> f, Predicate<T> p) {
+        private static <T> BiConsumer<Frame, Bytecode> jumpBranchByComparation(Function<Frame.OperandStack, T> f,
+                Predicate<T> p) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 if (p.test(f.apply(operandStack))) {
@@ -1285,12 +1342,11 @@ final class Instruction {
 
         /**
          * Generate a lambda function that map a value from the OperandStack to the other value.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d]neg [i|l|f|d]2[i|l|f|d]
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d]neg [i|l|f|d]2[i|l|f|d]}
          */
-        private static <T, R> BiConsumer<Frame, Bytecode> unaryOperate(Function<Frame.OperandStack, T> f1, Function<T, R> f2) {
+        private static <T, R> BiConsumer<Frame, Bytecode> unaryOperate(Function<Frame.OperandStack, T> f1,
+                Function<T, R> f2) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 T a = f1.apply(operandStack);
@@ -1299,13 +1355,13 @@ final class Instruction {
         }
 
         /**
-         * Generate a lambda function that calc two value from the OperandStack, and a exception is throwed when the given function p is not satisfied.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d]div [i|l|f|d]rem
-         * </pre>
+         * Generate a lambda function that calc two value from the OperandStack, and a exception is throwed when the
+         * given function p is not satisfied.
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d]div [i|l|f|d]rem}
          */
-        private static <T> BiConsumer<Frame, Bytecode> arithmeticOperate(Function<Frame.OperandStack, T> f1, BiFunction<T, T, T> f2, Predicate<T> p) {
+        private static <T> BiConsumer<Frame, Bytecode> arithmeticOperate(Function<Frame.OperandStack, T> f1,
+                BiFunction<T, T, T> f2, Predicate<T> p) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 T a = f1.apply(operandStack);
@@ -1318,23 +1374,22 @@ final class Instruction {
 
         /**
          * Generate a lambda function that calc two value from the OperandStack.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d]add [i|l|f|d]sub [i|l|f|d]mul [i|l]and [i|l]or [i|l]xor
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d]add [i|l|f|d]sub [i|l|f|d]mul [i|l]and [i|l]or [i|l]xor}
          */
-        private static <T> BiConsumer<Frame, Bytecode> arithmeticOperate(Function<Frame.OperandStack, T> f1, BiFunction<T, T, T> f2) {
+        private static <T> BiConsumer<Frame, Bytecode> arithmeticOperate(Function<Frame.OperandStack, T> f1,
+                BiFunction<T, T, T> f2) {
             return arithmeticOperate(f1, f2, a -> false);
         }
 
         /**
-         * Generate a lambda function that calc two value from the OperandStack, and these two value can be a different way to deal.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l]shl [i|l]shr [i|l]ushr
-         * </pre>
+         * Generate a lambda function that calc two value from the OperandStack, and these two value can be a different
+         * way to deal.
+         * <p>
+         * These instructions below use it: {@code [i|l]shl [i|l]shr [i|l]ushr}
          */
-        private static <T, R> BiConsumer<Frame, Bytecode> arithmeticOperate(Function<Frame.OperandStack, R> f1, Function<Frame.OperandStack, T> f2, BiFunction<T, R, T> f3) {
+        private static <T, R> BiConsumer<Frame, Bytecode> arithmeticOperate(Function<Frame.OperandStack, R> f1,
+                Function<Frame.OperandStack, T> f2, BiFunction<T, R, T> f3) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 R a = f1.apply(operandStack);
@@ -1344,10 +1399,8 @@ final class Instruction {
 
         /**
          * Generate a lambda function that create a new frame to java stack and drop the current frame from java stack.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d|a]return
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d|a]return}
          */
         private static <T> BiConsumer<Frame, Bytecode> returnOperate(Function<Frame.OperandStack, T> f1) {
             return (frame, bytecode) -> {
@@ -1363,10 +1416,8 @@ final class Instruction {
 
         /**
          * Generate a lambda function that execute ldc operation.
-         * <pre>
-         * These instructions below use it:
-         *   ldc ldc_w ldc2_w
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code ldc ldc_w ldc2_w}
          */
         private static BiConsumer<Frame, Bytecode> LdcOperate(Function<Bytecode, Integer> f1) {
             return (frame, bytecode) -> {
@@ -1377,45 +1428,44 @@ final class Instruction {
                 Object value = constantPool.getValue();
 
                 switch (constantPool.getTag()) {
-                case Classfile.CONSTANTPOOL_TABLE.INTEGER:
-                    operandStack.push((int) value);
-                    break;
-                case Classfile.CONSTANTPOOL_TABLE.FLOAT:
-                    operandStack.push((float) value);
-                    break;
-                case Classfile.CONSTANTPOOL_TABLE.LONG:
-                    operandStack.push((long) value);
-                    break;
-                case Classfile.CONSTANTPOOL_TABLE.DOUBLE:
-                    operandStack.push((double) value);
-                    break;
-                case Classfile.CONSTANTPOOL_TABLE.STRING:
-                    String stringValue = runtimeConstantPool.dereference((int) value).getValue().toString();
-                    operandStack.push(MethodArea.Clazz.makeInstanceFrom(stringValue));
-                    break;
-                case Classfile.CONSTANTPOOL_TABLE.CLASS:
-                    String name = runtimeConstantPool.dereference((int) value).getValue().toString();
-                    if (name.startsWith("[")) {
-                        operandStack.push(runtimeConstantPool.dereferenceArrayClazz(index).getClazzInstance());
-                    } else {
-                        operandStack.push(runtimeConstantPool.dereferenceClazz(index).getClazzInstance());
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("Todo: LDC Unknown type.");
-                    //@todo
+                    case Classfile.CONSTANTPOOL_TABLE.INTEGER:
+                        operandStack.push((int)value);
+                        break;
+                    case Classfile.CONSTANTPOOL_TABLE.FLOAT:
+                        operandStack.push((float)value);
+                        break;
+                    case Classfile.CONSTANTPOOL_TABLE.LONG:
+                        operandStack.push((long)value);
+                        break;
+                    case Classfile.CONSTANTPOOL_TABLE.DOUBLE:
+                        operandStack.push((double)value);
+                        break;
+                    case Classfile.CONSTANTPOOL_TABLE.STRING:
+                        String stringValue = runtimeConstantPool.dereference((int)value).getValue().toString();
+                        operandStack.push(MethodArea.Clazz.makeInstanceFrom(stringValue));
+                        break;
+                    case Classfile.CONSTANTPOOL_TABLE.CLASS:
+                        String name = runtimeConstantPool.dereference((int)value).getValue().toString();
+                        if (name.startsWith("[")) {
+                            operandStack.push(runtimeConstantPool.dereferenceArrayClazz(index).getClazzInstance());
+                        } else {
+                            operandStack.push(runtimeConstantPool.dereferenceClazz(index).getClazzInstance());
+                        }
+                        break;
+                    default:
+                        throw new RuntimeException("Todo: LDC Unknown type.");
+                    // @todo
                 }
             };
         }
 
         /**
          * Generate a lambda function that get a array from OperandStack and push its generic value to LocalVariable.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d|a|b|c|s]aload
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d|a|b|c|s]aload}
          */
-        private static <T, R> BiConsumer<Frame, Bytecode> arrayLoad(Function<Object, T> f1, BiPredicate<T, Integer> p, BiFunction<T, Integer, R> f2) {
+        private static <T, R> BiConsumer<Frame, Bytecode> arrayLoad(Function<Object, T> f1, BiPredicate<T, Integer> p,
+                BiFunction<T, Integer, R> f2) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 int index = operandStack.popInt();
@@ -1424,7 +1474,7 @@ final class Instruction {
                     throw new RuntimeException("Array index can not a negative number.");
                 }
 
-                Heap.ArrayInstance arrayInstance = (Heap.ArrayInstance) operandStack.pop();
+                Heap.ArrayInstance arrayInstance = (Heap.ArrayInstance)operandStack.pop();
 
                 if (arrayInstance == null) {
                     throw new RuntimeException("Can not store a value to a null array.");
@@ -1442,12 +1492,11 @@ final class Instruction {
 
         /**
          * Generate a lambda function that store a generic value from OperandStack to class `Field`.
-         * <pre>
-         * These instructions below use it:
-         *   [i|l|f|d|a|b|c|s]astore
-         * </pre>
+         * <p>
+         * These instructions below use it: {@code [i|l|f|d|a|b|c|s]astore}
          */
-        private static <T, R> BiConsumer<Frame, Bytecode> arrayStore(Function<Frame.OperandStack, T> f1, Function<Object, R> f2, BiPredicate<R, Integer> p, BiConsumer<R, Map.Entry<Integer, T>> c) {
+        private static <T, R> BiConsumer<Frame, Bytecode> arrayStore(Function<Frame.OperandStack, T> f1,
+                Function<Object, R> f2, BiPredicate<R, Integer> p, BiConsumer<R, Map.Entry<Integer, T>> c) {
             return (frame, bytecode) -> {
                 Frame.OperandStack operandStack = frame.getOperandStack();
                 T value = f1.apply(operandStack);
@@ -1457,7 +1506,7 @@ final class Instruction {
                     throw new RuntimeException("Array index can not a negative number.");
                 }
 
-                Heap.ArrayInstance arrayInstance = (Heap.ArrayInstance) operandStack.pop();
+                Heap.ArrayInstance arrayInstance = (Heap.ArrayInstance)operandStack.pop();
 
                 if (arrayInstance == null) {
                     throw new RuntimeException("Can not store a value to a null array.");
@@ -1472,7 +1521,6 @@ final class Instruction {
                 c.accept(fields, new AbstractMap.SimpleEntry<>(index, value));
             };
         }
-
 
         private static void skipPadding(final Bytecode bytecode) {
             while (bytecode.getPc() % 4 != 0) {
@@ -1491,22 +1539,22 @@ final class Instruction {
 
         private static String convertArrayTypeToArrayClazzName(int type) {
             switch (type) {
-            case Classfile.ARRAY_TYPE_TABLE.T_BOOLEAN:
-                return "[Z";
-            case Classfile.ARRAY_TYPE_TABLE.T_BYTE:
-                return "[B";
-            case Classfile.ARRAY_TYPE_TABLE.T_CHAR:
-                return "[C";
-            case Classfile.ARRAY_TYPE_TABLE.T_SHORT:
-                return "[S";
-            case Classfile.ARRAY_TYPE_TABLE.T_INT:
-                return "[I";
-            case Classfile.ARRAY_TYPE_TABLE.T_LONG:
-                return "[J";
-            case Classfile.ARRAY_TYPE_TABLE.T_FLOAT:
-                return "[F";
-            case Classfile.ARRAY_TYPE_TABLE.T_DOUBLE:
-                return "[D";
+                case Classfile.ARRAY_TYPE_TABLE.T_BOOLEAN:
+                    return "[Z";
+                case Classfile.ARRAY_TYPE_TABLE.T_BYTE:
+                    return "[B";
+                case Classfile.ARRAY_TYPE_TABLE.T_CHAR:
+                    return "[C";
+                case Classfile.ARRAY_TYPE_TABLE.T_SHORT:
+                    return "[S";
+                case Classfile.ARRAY_TYPE_TABLE.T_INT:
+                    return "[I";
+                case Classfile.ARRAY_TYPE_TABLE.T_LONG:
+                    return "[J";
+                case Classfile.ARRAY_TYPE_TABLE.T_FLOAT:
+                    return "[F";
+                case Classfile.ARRAY_TYPE_TABLE.T_DOUBLE:
+                    return "[D";
             }
             throw new RuntimeException(type + " is not a valid array type.");
         }
@@ -1515,20 +1563,21 @@ final class Instruction {
             return "[L" + className + ";";
         }
 
-        private static void createMultiArray(MethodArea.ArrayClazz arrayClazz, Heap.ArrayInstance arrayInstance, int[] dimensionSize, int index) {
+        private static void createMultiArray(MethodArea.ArrayClazz arrayClazz, Heap.ArrayInstance arrayInstance,
+                int[] dimensionSize, int index) {
             if (index < dimensionSize.length) {
                 arrayClazz = MethodArea.findArrayClazz(arrayClazz.getFieldType());
-                Object[] fieldInstances = (Object[]) arrayInstance.getFields();
+                Object[] fieldInstances = (Object[])arrayInstance.getFields();
                 for (int i = 0; i < fieldInstances.length; ++i) {
                     fieldInstances[i] = arrayClazz.makeInstance(dimensionSize[index]);
-                    createMultiArray(arrayClazz, (Heap.ArrayInstance) fieldInstances[i], dimensionSize, index + 1);
+                    createMultiArray(arrayClazz, (Heap.ArrayInstance)fieldInstances[i], dimensionSize, index + 1);
                 }
             }
         }
 
         private static int countArgumentTypesSpace(String[] argumentTypes, boolean isStatic) {
             int size = isStatic ? argumentTypes.length : argumentTypes.length + 1;
-            for (String argumentType: argumentTypes) {
+            for (String argumentType : argumentTypes) {
                 if (argumentType.equals("J") || argumentType.equals("D")) {
                     ++size;
                 }
@@ -1536,7 +1585,8 @@ final class Instruction {
             return size;
         }
 
-        private static void createNewFrame(MethodArea.Method method, Frame currentFrame, Frame.OperandStack operandStack, String[] argumentTypes, int localVariableIndex) {
+        private static void createNewFrame(MethodArea.Method method, Frame currentFrame,
+                Frame.OperandStack operandStack, String[] argumentTypes, int localVariableIndex) {
             // System.out.println("class: " + method.getClazz().getClassName());
             // System.out.println("method: " + method.getName());
             // System.out.println("sign: " + method.getDescriptor());
@@ -1557,28 +1607,28 @@ final class Instruction {
 
             for (int i = argumentTypes.length - 1; i >= 0; --i) {
                 switch (argumentTypes[i].charAt(0)) {
-                case 'Z':
-                case 'B':
-                case 'C':
-                case 'S':
-                case 'I':
-                    nextLocalVariable.set(localVariableIndex, operandStack.popInt());
-                    break;
-                case 'F':
-                    nextLocalVariable.set(localVariableIndex, operandStack.popFloat());
-                    break;
-                case 'J':
-                    --localVariableIndex;
-                    nextLocalVariable.set(localVariableIndex, operandStack.popLong());
-                    break;
-                case 'D':
-                    --localVariableIndex;
-                    nextLocalVariable.set(localVariableIndex, operandStack.popDouble());
-                    break;
-                case 'L':
-                case '[':
-                    nextLocalVariable.set(localVariableIndex, operandStack.pop());
-                    break;
+                    case 'Z':
+                    case 'B':
+                    case 'C':
+                    case 'S':
+                    case 'I':
+                        nextLocalVariable.set(localVariableIndex, operandStack.popInt());
+                        break;
+                    case 'F':
+                        nextLocalVariable.set(localVariableIndex, operandStack.popFloat());
+                        break;
+                    case 'J':
+                        --localVariableIndex;
+                        nextLocalVariable.set(localVariableIndex, operandStack.popLong());
+                        break;
+                    case 'D':
+                        --localVariableIndex;
+                        nextLocalVariable.set(localVariableIndex, operandStack.popDouble());
+                        break;
+                    case 'L':
+                    case '[':
+                        nextLocalVariable.set(localVariableIndex, operandStack.pop());
+                        break;
                 }
                 --localVariableIndex;
             }
@@ -1588,7 +1638,8 @@ final class Instruction {
             }
         }
 
-        private static boolean printHook(MethodArea.Method method, String[] argumentTypes, Frame.OperandStack operandStack) {
+        private static boolean printHook(MethodArea.Method method, String[] argumentTypes,
+                Frame.OperandStack operandStack) {
             Map<String, Consumer<Object>> fnMap = new HashMap<>();
             fnMap.put("println", System.out::println);
             fnMap.put("print", System.out::print);
@@ -1599,40 +1650,41 @@ final class Instruction {
                         System.out.println("");
                     } else {
                         switch (argumentTypes[0]) {
-                        case "F":
-                            fnMap.get(methodName).accept(operandStack.popFloat());
-                            break;
-                        case "D":
-                            fnMap.get(methodName).accept(operandStack.popDouble());
-                            break;
-                        case "J":
-                            fnMap.get(methodName).accept(operandStack.popLong());
-                            break;
-                        default:
-                            Object result = operandStack.pop();
-                            if (result instanceof Heap.Instance) {
-                                Heap.Instance instance = (Heap.Instance) result;
-                                if (instance.getClazz().getClassName().equals("java/lang/String")) {
-                                    // Heap.ArrayInstance charsInstance = (Heap.ArrayInstance) instance.findField("value", "[B").getValue();
-                                    Heap.ArrayInstance charsInstance = null;
-                                    for (MethodArea.Field stringField: instance.getFields()) {
-                                        if (stringField.getName().equals("value")) {
-                                            charsInstance = (Heap.ArrayInstance) stringField.getValue();
-                                            break;
+                            case "F":
+                                fnMap.get(methodName).accept(operandStack.popFloat());
+                                break;
+                            case "D":
+                                fnMap.get(methodName).accept(operandStack.popDouble());
+                                break;
+                            case "J":
+                                fnMap.get(methodName).accept(operandStack.popLong());
+                                break;
+                            default:
+                                Object result = operandStack.pop();
+                                if (result instanceof Heap.Instance) {
+                                    Heap.Instance instance = (Heap.Instance)result;
+                                    if (instance.getClazz().getClassName().equals("java/lang/String")) {
+                                        // Heap.ArrayInstance charsInstance = (Heap.ArrayInstance)
+                                        // instance.findField("value", "[B").getValue();
+                                        Heap.ArrayInstance charsInstance = null;
+                                        for (MethodArea.Field stringField : instance.getFields()) {
+                                            if (stringField.getName().equals("value")) {
+                                                charsInstance = (Heap.ArrayInstance)stringField.getValue();
+                                                break;
+                                            }
                                         }
+                                        int[] ints = (int[])charsInstance.getFields();
+                                        char[] chars = new char[ints.length];
+                                        for (int i = 0; i < chars.length; ++i) {
+                                            chars[i] = (char)ints[i];
+                                        }
+                                        fnMap.get(methodName).accept(new String(chars));
+                                    } else {
+                                        fnMap.get(methodName).accept(instance);
                                     }
-                                    int[] ints = (int[]) charsInstance.getFields();
-                                    char[] chars = new char[ints.length];
-                                    for (int i = 0; i < chars.length; ++i) {
-                                        chars[i] = (char) ints[i];
-                                    }
-                                    fnMap.get(methodName).accept(new String(chars));
                                 } else {
-                                    fnMap.get(methodName).accept(instance);
+                                    fnMap.get(methodName).accept(result);
                                 }
-                            } else {
-                                fnMap.get(methodName).accept(result);
-                            }
                         }
                     }
                     return true;

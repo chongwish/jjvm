@@ -2,11 +2,9 @@ package me.chongwish.jjvm;
 
 import java.util.function.Supplier;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
- * Class Bytecode is a encapsulation of bytecode. It make the operation of bytecode like the way to operate class ByteBuffer.
+ * Class Bytecode is a encapsulation of bytecode. It make the operation of bytecode like the way to operate class
+ * ByteBuffer.
  */
 final class Bytecode {
     /**
@@ -17,9 +15,15 @@ final class Bytecode {
     /**
      * The index of bytecode
      */
-    @Getter
-    @Setter
     private int pc;
+
+    public int getPc() {
+        return pc;
+    }
+
+    public void setPc(int pc) {
+        this.pc = pc;
+    }
 
     public Bytecode(byte[] code) {
         this(code, 0);

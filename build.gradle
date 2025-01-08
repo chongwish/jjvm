@@ -1,6 +1,6 @@
 allprojects {
     group = 'me.chongwish.jjvm'
-    version = '0.0.1'
+    version = '0.0.2'
     description = """A JVM written Java"""
 
     apply plugin: 'java'
@@ -11,7 +11,7 @@ allprojects {
     targetCompatibility = '1.8'
 
     repositories {
-        maven { url "$mavenPublicRepo" }
+        mavenCentral()
     }
 
     tasks.withType(JavaCompile) {
@@ -44,16 +44,6 @@ test {
 }
 
 dependencies {
-    // command line parser
-    compile 'info.picocli:picocli:4.5.1'
-    annotationProcessor 'info.picocli:picocli-codegen:4.5.1'
-
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
     testImplementation 'junit:junit:4.13'
-
-    testCompile "org.mockito:mockito-core:2.+"
-
     testImplementation project(':jjvm-demo')
 }
