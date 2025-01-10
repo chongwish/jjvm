@@ -64,8 +64,8 @@ public class InstructionTest {
         double d = 43.2;
         FieldData fieldData = new FieldData();
         fieldData.intField1 = 40000;
-        fieldData.intField2 = (int) d;
-        fieldData.floatField1 = (float) d;
+        fieldData.intField2 = (int)d;
+        fieldData.floatField1 = (float)d;
         fieldData.doubleField1 = fieldData.floatField1;
         d = FieldData.doubleStaticField;
         FieldData.doubleStaticField = d;
@@ -74,7 +74,8 @@ public class InstructionTest {
         d = fieldData.doubleField1;
         d = FieldData.constDoubleField2;
 
-        if (fieldData instanceof FieldData) {}
+        if (fieldData instanceof FieldData) {
+        }
     }
 
     public void testArray() {
@@ -93,12 +94,13 @@ public class InstructionTest {
         dArray[2] = 33.4;
         d = dArray[2];
         dArray[1] = d;
-        dArray[0] = (double) l;
+        dArray[0] = (double)l;
         int[][][] mi = new int[4][7][8];
         mi[3][5][6] = 378;
         i = mi[3][5][6];
         mi[2][3][4] = i;
-        if (mi instanceof int[][][]) {}
+        if (mi instanceof int[][][]) {
+        }
     }
 
     public void testMethod() {
@@ -124,31 +126,32 @@ public class InstructionTest {
         final int result = 10;
         int v = 0;
         switch (result) {
-        case 0:
-            v = 1;
-            break;
-        case 1:
-            v = 2;
-            break;
-        default:
-            v = 3;
+            case 0:
+                v = 1;
+                break;
+            case 1:
+                v = 2;
+                break;
+            default:
+                v = 3;
         }
         switch (result) {
-        case 21:
-            v = 4;
-            break;
-        case 11:
-            v = 5;
-            break;
-        default:
-            v = 6;
+            case 21:
+                v = 4;
+                break;
+            case 11:
+                v = 5;
+                break;
+            default:
+                v = 6;
         }
-        if (v == 0) {}
+        if (v == 0) {
+        }
     }
 
     public void testCircle() {
         int sum = 0;
-        for (int i = 1; i <10; i++) {
+        for (int i = 1; i < 10; i++) {
             sum += i;
         }
 
@@ -162,7 +165,7 @@ public class InstructionTest {
 
     private Method getMethod(final String name, final Clazz clazz) {
         Method result = null;
-        for (final Method m: clazz.getMethods()) {
+        for (final Method m : clazz.getMethods()) {
             if (name.equals(m.getName())) {
                 result = m;
                 break;
@@ -186,4 +189,3 @@ public class InstructionTest {
         System.out.println("");
     }
 }
-

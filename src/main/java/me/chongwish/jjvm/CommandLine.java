@@ -184,7 +184,7 @@ public class CommandLine {
             }
         }
 
-        if (clazzName == null) {
+        if (clazzName == null || clazzName.charAt(0) == '-') {
             // no main class
             System.err.println("JJVM needs a class to run!");
             showHelp();
@@ -202,7 +202,11 @@ public class CommandLine {
     }
 
     public void showHelp() {
-        System.out.println("JJVM [-version] [-?|-help] [-cp $path]... clazz [$argv]...");
+        System.out.println("JJVM [-version] [-?|-help] [-cp|-classpath $path]... clazz [$argv...]");
+        System.out.println("\tclazz $argv: Main class and it's argument");
+        System.out.println("\t-version: Show version");
+        System.out.println("\t-?, -help: Show manual");
+        System.out.println("\t-cp, -classpath $path: Classpath");
         System.exit(0);
     }
 
